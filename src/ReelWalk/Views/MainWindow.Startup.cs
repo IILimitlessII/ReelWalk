@@ -22,6 +22,7 @@ public partial class MainWindow
             }
 
             Activate();
+            ClaimKeyboardFocus();
             _viewModel.CopyText = text =>
             {
                 var clipboard = Clipboard;
@@ -36,6 +37,8 @@ public partial class MainWindow
             _slideVideo = new SlideVideo(VideoPlayer);
             _slideVideo.SetCover(_cover);
             _slideVideo.Volume = config.VideoVolume;
+            _slideVideo.SurfaceShown += (s, e2) => ClaimKeyboardFocus();
+            _slideVideo.Opened += (s, e2) => ClaimKeyboardFocus();
             LoadControls(config);
 
             if (config.ImagePaths.Count == 0)
@@ -139,6 +142,7 @@ public partial class MainWindow
 
         SetupTrayIcon();
         _viewModel.Playback.Start();
+        ClaimKeyboardFocus();
 
         _videoProgressTimer = new DispatcherTimer
         {

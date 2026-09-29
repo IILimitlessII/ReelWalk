@@ -41,6 +41,8 @@ public partial class MainWindow : Window
         Loaded += MainWindow_Loaded;
         Closing += MainWindow_Closing;
         PointerPressed += MainWindow_PointerPressed;
+        Opened += (s, e) => ClaimKeyboardFocus();
+        Activated += (s, e) => ClaimKeyboardFocus();
         Deactivated += (s, e) => _viewModel.EndScrub();
         _viewModel.PropertyChanged += ViewModel_PropertyChanged;
 
@@ -108,7 +110,7 @@ public partial class MainWindow : Window
     // Returns nothing.
     private void MainWindow_PointerPressed(object sender, PointerPressedEventArgs e)
     {
-        Focus();
+        ClaimKeyboardFocus();
 
         if (IsDescendantOf(e.Source, VideoProgressOverlay) ||
             IsDescendantOf(e.Source, FolderExplorer) ||
@@ -148,6 +150,22 @@ public partial class MainWindow : Window
         }
 
         e.Handled = true;
+    }
+
+    // Puts keyboard focus on this window so Linux (and video) keep receiving keys.
+    // Returns nothing.
+    private void ClaimKeyboardFocus()
+    {
+        if (!IsVisible)
+            return;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (!IsVisible)
+                return;
+            Activate();
+            Focus();
+        }, DispatcherPriority.Input);
     }
 
     // Next or previous file, or volume when Ctrl is held.

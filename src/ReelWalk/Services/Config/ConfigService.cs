@@ -23,20 +23,36 @@ internal static partial class ConfigService
     {
         get
         {
-            return Path.Combine(ExeDirectory(), FileName);
+            return Path.Combine(DataDirectory(), FileName);
         }
     }
 
-    // Folder that contains the program file.
-    // Returns the app base directory when that path is unknown.
-    private static string ExeDirectory()
+    // Folder for ReelWalk.toml and ReelWalk.library.
+    // REELWALK_DATA_DIR overrides this (used by the Debug launch configs).
+    // Otherwise the folder beside the program, or BaseDirectory when hosted by `dotnet`.
+    internal static string DataDirectory()
     {
+        var overrideDir = Environment.GetEnvironmentVariable("REELWALK_DATA_DIR");
+        if (!string.IsNullOrWhiteSpace(overrideDir))
+        {
+            try
+            {
+                Directory.CreateDirectory(overrideDir);
+            }
+            catch { }
+            return Path.GetFullPath(overrideDir.Trim());
+        }
+
         var path = Environment.ProcessPath;
         if (!string.IsNullOrEmpty(path))
         {
-            var dir = Path.GetDirectoryName(path);
-            if (!string.IsNullOrEmpty(dir))
-                return dir;
+            var name = Path.GetFileNameWithoutExtension(path);
+            if (!string.Equals(name, "dotnet", StringComparison.OrdinalIgnoreCase))
+            {
+                var dir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(dir))
+                    return dir;
+            }
         }
         return AppContext.BaseDirectory;
     }

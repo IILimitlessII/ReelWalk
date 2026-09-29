@@ -42,6 +42,7 @@
 
         <vlc:VideoView x:Name="VideoPlayer"
                        IsVisible="False"
+                       Focusable="False"
                        IsHitTestVisible="False"/>
 
         <Popup IsOpen="{Binding IsPathVisible}"

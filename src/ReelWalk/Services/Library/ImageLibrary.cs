@@ -109,7 +109,7 @@ internal sealed partial class ImageLibrary : IDisposable
         history.SetLimit(limit);
     }
 
-    // Loads the saved library, then rescans.
+    // Loads the saved library, then scans for anything new.
     // publish runs on this background thread. The stage must not replace a newer scan. Returns the file count.
     internal Task<int> InitAsync(
         List<string> imagePaths,
@@ -129,10 +129,9 @@ internal sealed partial class ImageLibrary : IDisposable
                 IsQuickLocalFile(this.resumePath) && publish != null)
                 publish(new List<string> { this.resumePath }, false, LibraryStageResume);
 
+            var cached = LibraryScanner.FilterIgnored(LibraryCache.Load(cacheFile), ignorePaths);
             var cacheTask = Task.Run(() =>
             {
-                var cached = LibraryCache.Load(cacheFile);
-                cached = LibraryScanner.FilterIgnored(cached, ignorePaths);
                 if (cached == null || cached.Count == 0 || publish == null)
                     return;
 
@@ -149,15 +148,8 @@ internal sealed partial class ImageLibrary : IDisposable
                 }
             });
 
-            bool canSave = AnyRootExists(imagePaths);
-            bool wrote = false;
             var found = LibraryScanner.Scan(imagePaths, ignorePaths, progressCallback, batch =>
             {
-                if (!wrote && canSave && batch != null && batch.Count > 0)
-                {
-                    wrote = true;
-                    LibraryCache.Save(cacheFile, batch);
-                }
                 if (publish != null)
                     publish(batch, false, LibraryStageScan);
             });
@@ -168,10 +160,17 @@ internal sealed partial class ImageLibrary : IDisposable
             if (publish != null)
                 publish(null, true, LibraryStageScan);
 
-            if (found != null && AnyRootExists(imagePaths))
-                LibraryCache.Save(cacheFile, found);
+            // Keep the indexed list. Only rewrite when the scan found paths that were not cached.
+            if (AnyRootExists(imagePaths))
+            {
+                var toSave = LibraryCache.MergeNew(cached, found);
+                if (toSave != null)
+                    LibraryCache.Save(cacheFile, toSave);
+            }
 
-            return found == null ? 0 : found.Count;
+            if (found != null && found.Count > 0)
+                return found.Count;
+            return cached == null ? 0 : cached.Count;
         });
     }
 

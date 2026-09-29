@@ -20,6 +20,7 @@ internal sealed class SlideVideo : IDisposable
     internal event EventHandler Ended;
     internal event EventHandler Failed;
     internal event EventHandler Opened;
+    internal event EventHandler SurfaceShown;
 
     // Starts LibVLC and the player shown in view.
     // view is the Avalonia video surface. Returns nothing.
@@ -39,6 +40,9 @@ internal sealed class SlideVideo : IDisposable
             options.Add("--avcodec-hw=d3d11va");
         libVlc = new LibVLC(options.ToArray());
         player = new MediaPlayer(libVlc);
+        // On Linux the native video surface can steal keyboard focus; keep keys for Avalonia.
+        player.EnableKeyInput = false;
+        player.EnableMouseInput = false;
         view.MediaPlayer = player;
         player.EndReached += OnEndReached;
         player.EncounteredError += OnError;
@@ -193,6 +197,12 @@ internal sealed class SlideVideo : IDisposable
         bool show = surfaceOn && !obscured;
         view.IsVisible = show;
         view.Margin = new Thickness(0, 0, 0, show ? 48 : 0);
+        if (show)
+        {
+            var handler = SurfaceShown;
+            if (handler != null)
+                handler(this, EventArgs.Empty);
+        }
     }
 
     // Detaches the video from the window, then releases LibVLC.

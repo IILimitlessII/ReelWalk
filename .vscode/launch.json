@@ -1,0 +1,41 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ReelWalk (Linux)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/ReelWalk/bin/Debug/net10.0/ReelWalk.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/ReelWalk/bin/Debug/net10.0",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "justMyCode": true,
+      "requireExactSource": false,
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "DOTNET_ROOT": "${env:HOME}/.dotnet",
+        "PATH": "${env:HOME}/.dotnet:${env:PATH}",
+        "REELWALK_DATA_DIR": "${workspaceFolder}/.vscode/configs"
+      }
+    },
+    {
+      "name": "ReelWalk (Windows)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/ReelWalk/bin/Debug/net10.0/ReelWalk.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/ReelWalk/bin/Debug/net10.0",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "justMyCode": true,
+      "requireExactSource": false,
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "REELWALK_DATA_DIR": "${workspaceFolder}/.vscode/configs"
+      }
+    }
+  ]
+}

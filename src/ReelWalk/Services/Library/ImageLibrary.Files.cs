@@ -78,7 +78,7 @@ internal sealed partial class ImageLibrary : IDisposable
             if (n == null)
                 continue;
             exact.Add(n);
-            prefixes.Add(n + "\\");
+            prefixes.Add(Paths.FolderPrefix(n));
         }
         if (exact.Count == 0)
             return false;
@@ -136,7 +136,16 @@ internal sealed partial class ImageLibrary : IDisposable
             return true;
         for (int i = 0; i < prefixes.Count; i++)
         {
-            if (normalized.StartsWith(prefixes[i], StringComparison.OrdinalIgnoreCase))
+            var prefix = prefixes[i];
+            if (string.IsNullOrEmpty(prefix))
+                continue;
+            if (normalized.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                return true;
+            // Older caches may have used the opposite separator.
+            var alt = prefix.EndsWith("\\")
+                ? prefix.TrimEnd('\\') + "/"
+                : prefix.TrimEnd('/') + "\\";
+            if (normalized.StartsWith(alt, StringComparison.OrdinalIgnoreCase))
                 return true;
         }
         return false;

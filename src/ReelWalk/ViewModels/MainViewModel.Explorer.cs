@@ -328,7 +328,7 @@ internal sealed partial class MainViewModel
         else if (string.IsNullOrEmpty(_browsePath))
             ExplorerEmptyText = "No library folders to open.";
         else
-            ExplorerEmptyText = "No folders inside. Play " + ExplorerTitle + " plays the files here.";
+            ExplorerEmptyText = "No folders inside. Play " + ExplorerTitle + " scans and plays the files here.";
     }
 
     // Count as words.

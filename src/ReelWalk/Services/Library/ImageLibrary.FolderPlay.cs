@@ -33,6 +33,9 @@ internal sealed partial class ImageLibrary : IDisposable
         if (folderFiles.Count <= 1)
             return false;
 
+        // Remember newly found paths so the main library grows with folder play.
+        AbsorbFiles(folderFiles, false);
+
         mode = NormalizeFolderMode(mode);
         OrderFolderFiles(folderFiles, mode);
 
@@ -150,7 +153,7 @@ internal sealed partial class ImageLibrary : IDisposable
             normalizedAll.RemoveAt(at);
     }
 
-    // Playable files for folder play.
+    // Playable files for folder play, collected from the filesystem.
     // folderPath is the chosen folder. Subfolders are included unless that choice is off.
     private List<string> CollectFolderFiles(string folderPath)
     {
@@ -159,51 +162,54 @@ internal sealed partial class ImageLibrary : IDisposable
         if (folder == null)
             return files;
 
-        var prefix = Paths.FolderPrefix(folder);
+        try
+        {
+            if (!Directory.Exists(folder))
+                return files;
+        }
+        catch
+        {
+            return files;
+        }
+
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (allImagePaths != null && normalizedAll != null &&
-            normalizedAll.Count == allImagePaths.Count)
+        try
         {
-            for (int i = 0; i < normalizedAll.Count; i++)
+            if (folderIncludeSubfolders)
             {
-                var n = normalizedAll[i];
-                if (n != null &&
-                    IncludeFolderFile(n, prefix) &&
-                    MediaTypes.Allows(allImagePaths[i], mediaShow) &&
-                    seen.Add(allImagePaths[i]))
-                    files.Add(allImagePaths[i]);
-            }
-        }
-        else if (allImagePaths != null)
-        {
-            for (int i = 0; i < allImagePaths.Count; i++)
-            {
-                var p = allImagePaths[i];
-                if (BelongsInFolderPlay(p, folder) &&
-                    MediaTypes.Allows(p, mediaShow) &&
-                    seen.Add(p))
-                    files.Add(p);
-            }
-        }
-
-        var current = GetCurrentImagePath();
-        if (!string.IsNullOrEmpty(current) &&
-            BelongsInFolderPlay(current, folder) &&
-            seen.Add(current))
-            files.Add(current);
-
-        if (files.Count <= 1)
-        {
-            try
-            {
-                foreach (var f in Directory.EnumerateFiles(folderPath))
+                var dirs = new Queue<string>();
+                dirs.Enqueue(folder);
+                while (dirs.Count > 0)
                 {
-                    if (MediaTypes.Allows(f, mediaShow) && seen.Add(f))
-                        files.Add(f);
+                    var dir = dirs.Dequeue();
+                    try
+                    {
+                        foreach (var sub in Directory.EnumerateDirectories(dir))
+                            dirs.Enqueue(sub);
+                    }
+                    catch { }
+
+                    try
+                    {
+                        foreach (var file in Directory.EnumerateFiles(dir))
+                        {
+                            if (MediaTypes.Allows(file, mediaShow) && seen.Add(file))
+                                files.Add(file);
+                        }
+                    }
+                    catch { }
                 }
             }
-            catch { }
+            else
+            {
+                foreach (var file in Directory.EnumerateFiles(folder))
+                {
+                    if (MediaTypes.Allows(file, mediaShow) && seen.Add(file))
+                        files.Add(file);
+                }
+            }
         }
+        catch { }
 
         return files;
     }
@@ -231,19 +237,6 @@ internal sealed partial class ImageLibrary : IDisposable
         history.Clear();
         PrepareShown();
         return true;
-    }
-
-    // True when normalizedFile belongs under prefix.
-    // prefix includes the trailing slash. Direct files only when subfolders are off.
-    private bool IncludeFolderFile(string normalizedFile, string prefix)
-    {
-        if (string.IsNullOrEmpty(normalizedFile) ||
-            !normalizedFile.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-            return false;
-        if (folderIncludeSubfolders)
-            return true;
-        var rest = normalizedFile.Substring(prefix.Length);
-        return rest.IndexOf('\\') < 0 && rest.IndexOf('/') < 0;
     }
 
     // True when file belongs in the folder currently being played.

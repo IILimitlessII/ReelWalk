@@ -67,4 +67,38 @@ internal static class LibraryCache
             catch { }
         }
     }
+
+    // Keeps the existing index and appends paths the scan found that were not already saved.
+    // cached is the previous ReelWalk.library. found is the latest full scan.
+    // Returns null when nothing new was found (caller should not rewrite the file).
+    internal static List<string> MergeNew(List<string> cached, List<string> found)
+    {
+        if (found == null || found.Count == 0)
+            return null;
+        if (cached == null || cached.Count == 0)
+            return found;
+
+        var known = new HashSet<string>(cached.Count, StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < cached.Count; i++)
+        {
+            if (!string.IsNullOrEmpty(cached[i]))
+                known.Add(cached[i]);
+        }
+
+        var merged = new List<string>(cached.Count + 64);
+        merged.AddRange(cached);
+        bool grew = false;
+        for (int i = 0; i < found.Count; i++)
+        {
+            var path = found[i];
+            if (string.IsNullOrEmpty(path))
+                continue;
+            if (!known.Add(path))
+                continue;
+            merged.Add(path);
+            grew = true;
+        }
+
+        return grew ? merged : null;
+    }
 }

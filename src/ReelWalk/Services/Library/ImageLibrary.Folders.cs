@@ -16,8 +16,8 @@ internal sealed partial class ImageLibrary
         internal Dictionary<string, FolderNode> Kids;
     }
 
-    // Library folders that contain files, for the top of the explorer.
-    // roots are the configured paths. totalFiles is their file count.
+    // Configured library roots that exist on disk, for the top of the explorer.
+    // roots are the configured paths. totalFiles is unknown here (0); play scans the folder.
     internal List<FolderChoice> ListRoots(IList<string> roots, out int totalFiles)
     {
         totalFiles = 0;
@@ -32,20 +32,23 @@ internal sealed partial class ImageLibrary
             if (string.IsNullOrWhiteSpace(full))
                 continue;
             var norm = Paths.Normalize(full) ?? full.TrimEnd('\\', '/');
-            FolderNode node;
-            if (!folderNodes.TryGetValue(norm, out node) || node.Total <= 0)
+            try
+            {
+                if (!Directory.Exists(norm))
+                    continue;
+            }
+            catch
+            {
                 continue;
+            }
 
-            totalFiles += node.Total;
-            bool hereMatch = here != null &&
-                (here.Equals(norm, StringComparison.OrdinalIgnoreCase) ||
-                 here.StartsWith(Paths.FolderPrefix(norm), StringComparison.OrdinalIgnoreCase));
+            bool hereMatch = here != null && Paths.IsInside(here, norm, true);
             result.Add(new FolderChoice
             {
                 Name = SegmentName(full, true),
-                FullPath = full,
-                FileCount = node.Total,
-                HasChildren = node.Kids != null && node.Kids.Count > 0,
+                FullPath = norm,
+                FileCount = 0,
+                HasChildren = HasSubfolders(norm),
                 IsHere = hereMatch,
                 IsSelected = hereMatch
             });
@@ -55,8 +58,8 @@ internal sealed partial class ImageLibrary
         return result;
     }
 
-    // Immediate child folders that already have files in the library.
-    // directory is the open folder. directFiles counts files sitting in directory itself.
+    // Immediate child folders on disk under directory.
+    // directory is the open folder. directFiles stays 0; play scans when chosen.
     internal List<FolderChoice> ListChildFolders(string directory, out int totalFiles, out int directFiles)
     {
         totalFiles = 0;
@@ -69,36 +72,46 @@ internal sealed partial class ImageLibrary
         if (dirNorm == null)
             return result;
 
-        FolderNode node;
-        if (!folderNodes.TryGetValue(dirNorm, out node))
+        try
+        {
+            if (!Directory.Exists(dirNorm))
+                return result;
+        }
+        catch
+        {
             return result;
-
-        totalFiles = node.Total;
-        directFiles = node.Direct;
-        if (node.Kids == null || node.Kids.Count == 0)
-            return result;
+        }
 
         string here = CurrentFolderNorm();
-        var prefix = Paths.FolderPrefix(dirNorm);
-        var names = new List<string>(node.Kids.Keys);
+        var names = new List<string>();
+        try
+        {
+            foreach (var sub in Directory.EnumerateDirectories(dirNorm))
+            {
+                var name = Paths.Leaf(sub);
+                if (!string.IsNullOrEmpty(name))
+                    names.Add(name);
+            }
+        }
+        catch
+        {
+            return result;
+        }
+
         names.Sort(StringComparer.OrdinalIgnoreCase);
         for (int i = 0; i < names.Count; i++)
         {
             var name = names[i];
-            FolderNode kid;
-            if (!node.Kids.TryGetValue(name, out kid) || kid.Total <= 0)
+            var full = Paths.Combine(dirNorm, name);
+            if (string.IsNullOrEmpty(full))
                 continue;
-            var full = prefix + name;
-            var childPrefix = full + "\\";
-            bool hereMatch = here != null &&
-                (here.Equals(full, StringComparison.OrdinalIgnoreCase) ||
-                 here.StartsWith(childPrefix, StringComparison.OrdinalIgnoreCase));
+            bool hereMatch = here != null && Paths.IsInside(here, full, true);
             result.Add(new FolderChoice
             {
                 Name = name,
                 FullPath = full,
-                FileCount = kid.Total,
-                HasChildren = kid.Kids != null && kid.Kids.Count > 0,
+                FileCount = 0,
+                HasChildren = HasSubfolders(full),
                 IsHere = hereMatch,
                 IsSelected = hereMatch
             });
@@ -106,6 +119,21 @@ internal sealed partial class ImageLibrary
 
         EnsureOneSelected(result);
         return result;
+    }
+
+    // True when folder has at least one readable subdirectory.
+    // Returns false when the folder cannot be listed.
+    private static bool HasSubfolders(string folder)
+    {
+        try
+        {
+            using (var e = Directory.EnumerateDirectories(folder).GetEnumerator())
+                return e.MoveNext();
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     // Path segments from the drive down to directory.

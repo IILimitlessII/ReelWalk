@@ -55,19 +55,43 @@ internal static class Paths
         if (string.IsNullOrEmpty(path))
             return "";
         var name = path.TrimEnd('\\', '/');
-        int slash = name.LastIndexOf('\\');
+        try
+        {
+            var leaf = Path.GetFileName(name);
+            if (!string.IsNullOrEmpty(leaf))
+                return leaf;
+        }
+        catch { }
+
+        int slash = Math.Max(name.LastIndexOf('\\'), name.LastIndexOf('/'));
         if (slash >= 0 && slash < name.Length - 1)
             return name.Substring(slash + 1);
         return name;
     }
 
-    // folder plus a trailing slash, for prefix checks.
+    // folder plus a trailing separator, for prefix checks.
     // path may already be normalized. Returns null when path is blank.
     internal static string FolderPrefix(string path)
     {
         if (string.IsNullOrEmpty(path))
             return null;
-        return path.TrimEnd('\\', '/') + "\\";
+        return path.TrimEnd('\\', '/') + Path.DirectorySeparatorChar;
+    }
+
+    // Joins a folder and a child name with the OS separator, then normalizes.
+    // Returns null when either part is blank.
+    internal static string Combine(string folder, string child)
+    {
+        if (string.IsNullOrEmpty(folder) || string.IsNullOrEmpty(child))
+            return null;
+        try
+        {
+            return Normalize(Path.Combine(folder.TrimEnd('\\', '/'), child));
+        }
+        catch
+        {
+            return FolderPrefix(folder) + child.TrimEnd('\\', '/');
+        }
     }
 
     // True when file is folder, or sits inside it.
