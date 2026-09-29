@@ -1,5 +1,13 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Kill Fluent/Windows accent yellow on every button hover/press. -->
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2F7CF055"/>
+    </Style>
+    <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2F7CF088"/>
+    </Style>
+
     <Style Selector="Button.folder">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="#F2F2F2"/>
@@ -12,12 +20,27 @@
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
     <Style Selector="Button.folder:pointerover">
-        <Setter Property="Background" Value="#FFFFFF33"/>
+        <Setter Property="Background" Value="#2F7CF055"/>
+    </Style>
+    <Style Selector="Button.folder:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2F7CF055"/>
     </Style>
     <Style Selector="Button.folder.selected">
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="#FFFFFF44"/>
+        <Setter Property="Background" Value="#2F7CF0"/>
     </Style>
+    <Style Selector="Button.folder.selected /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2F7CF0"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.folder.selected:pointerover">
+        <Setter Property="Background" Value="#5B94F5"/>
+    </Style>
+    <Style Selector="Button.folder.selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#5B94F5"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
     <Style Selector="Button.mode">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="White"/>
@@ -28,10 +51,24 @@
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
     <Style Selector="Button.mode:pointerover">
-        <Setter Property="Background" Value="#FFFFFF22"/>
+        <Setter Property="Background" Value="#2F7CF055"/>
+    </Style>
+    <Style Selector="Button.mode:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2F7CF055"/>
     </Style>
     <Style Selector="Button.mode.hot">
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="#FFFFFF33"/>
+        <Setter Property="Background" Value="#2F7CF0"/>
+    </Style>
+    <Style Selector="Button.mode.hot /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2F7CF0"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.mode.hot:pointerover">
+        <Setter Property="Background" Value="#5B94F5"/>
+    </Style>
+    <Style Selector="Button.mode.hot:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#5B94F5"/>
+        <Setter Property="Foreground" Value="White"/>
     </Style>
 </Styles>

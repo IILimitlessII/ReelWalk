@@ -80,7 +80,7 @@
                IsLightDismissEnabled="False"
                Topmost="True">
             <Border Background="#141414D8"
-                    BorderBrush="#FFFFFF44"
+                    BorderBrush="#2F7CF088"
                     BorderThickness="1"
                     Padding="18,16"
                     MaxWidth="560"
@@ -127,7 +127,7 @@
                Topmost="True"
                IsHitTestVisible="False">
             <Border Background="#141414E0"
-                    BorderBrush="#FFFFFF44"
+                    BorderBrush="#2F7CF088"
                     BorderThickness="1"
                     Padding="22,14"
                     CornerRadius="10"
@@ -210,12 +210,12 @@
                        IsHitTestVisible="False"/>
             <Border Height="3"
                     VerticalAlignment="Bottom"
-                    Background="#FFFFFF33"
+                    Background="#2F7CF044"
                     IsHitTestVisible="False"/>
             <Rectangle Height="3"
                        VerticalAlignment="Bottom"
                        HorizontalAlignment="Stretch"
-                       Fill="#FFFFFFEE"
+                       Fill="#2F7CF0"
                        IsHitTestVisible="False"
                        RenderTransformOrigin="0%,50%">
                 <Rectangle.RenderTransform>

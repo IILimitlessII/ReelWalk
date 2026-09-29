@@ -34,6 +34,7 @@
       "requireExactSource": false,
       "env": {
         "DOTNET_ENVIRONMENT": "Development",
+        "DOTNET_ROOT": "C:\\Program Files\\dotnet",
         "REELWALK_DATA_DIR": "${workspaceFolder}/.vscode/configs"
       }
     }

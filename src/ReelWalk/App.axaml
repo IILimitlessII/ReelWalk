@@ -3,7 +3,12 @@
              x:Class="ReelWalk.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
-        <FluentTheme />
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <ColorPaletteResources x:Key="Dark" Accent="#2F7CF0"/>
+                <ColorPaletteResources x:Key="Light" Accent="#2F7CF0"/>
+            </FluentTheme.Palettes>
+        </FluentTheme>
         <StyleInclude Source="avares://ReelWalk/Themes/Controls.axaml"/>
     </Application.Styles>
 </Application>
