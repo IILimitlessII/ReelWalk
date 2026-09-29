@@ -2,11 +2,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ReelWalk.App"
              RequestedThemeVariant="Dark">
+    <Application.Resources>
+        <!-- Hard-lock accent so Windows yellow never appears. -->
+        <Color x:Key="SystemAccentColor">#2F7CF0</Color>
+        <Color x:Key="SystemAccentColorDark1">#2563EB</Color>
+        <Color x:Key="SystemAccentColorDark2">#1D4ED8</Color>
+        <Color x:Key="SystemAccentColorDark3">#1E3A8A</Color>
+        <Color x:Key="SystemAccentColorLight1">#5B94F5</Color>
+        <Color x:Key="SystemAccentColorLight2">#93B8F8</Color>
+        <Color x:Key="SystemAccentColorLight3">#BFDBFE</Color>
+        <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="#2F7CF055"/>
+        <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="#2F7CF088"/>
+        <SolidColorBrush x:Key="SystemControlHighlightAccentListAccentHighBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="AccentButtonBackground" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="#5B94F5"/>
+        <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="#2563EB"/>
+        <SolidColorBrush x:Key="AccentButtonBorderBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="AccentButtonBorderBrushPointerOver" Color="#5B94F5"/>
+        <SolidColorBrush x:Key="AccentButtonBorderBrushPressed" Color="#2563EB"/>
+        <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="TextControlElevationBorderFocusedBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="FocusStrokeColorOuter" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="FocusStrokeColorInner" Color="#5B94F5"/>
+        <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#2F7CF044"/>
+        <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="#2F7CF066"/>
+        <SolidColorBrush x:Key="SystemControlHighlightListAccentLowSelectedBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="ScrollBarThumbFill" Color="#2F7CF066"/>
+        <SolidColorBrush x:Key="ScrollBarThumbFillPointerOver" Color="#2F7CF0AA"/>
+        <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="#2F7CF0"/>
+    </Application.Resources>
     <Application.Styles>
         <FluentTheme>
             <FluentTheme.Palettes>
-                <ColorPaletteResources x:Key="Dark" Accent="#2F7CF0"/>
-                <ColorPaletteResources x:Key="Light" Accent="#2F7CF0"/>
+                <ColorPaletteResources x:Key="Dark" Accent="#2F7CF0" RegionColor="#141414"/>
+                <ColorPaletteResources x:Key="Light" Accent="#2F7CF0" RegionColor="#F5F5F5"/>
             </FluentTheme.Palettes>
         </FluentTheme>
         <StyleInclude Source="avares://ReelWalk/Themes/Controls.axaml"/>

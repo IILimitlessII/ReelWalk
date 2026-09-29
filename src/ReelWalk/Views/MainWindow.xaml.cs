@@ -45,6 +45,9 @@ public partial class MainWindow : Window
         Activated += (s, e) => ClaimKeyboardFocus();
         Deactivated += (s, e) => _viewModel.EndScrub();
         _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+        _viewModel.ControlsReloaded += ReloadControlsFromConfig;
+        _viewModel.SettingsFitApplied += ApplyImageFit;
+        _viewModel.SkipSeekChanged += ReloadSkipSeek;
 
         _toastTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(900) };
         _toastTimer.Tick += (s, e) =>
@@ -68,10 +71,32 @@ public partial class MainWindow : Window
         if (e.PropertyName == "SelectedExplorer" || e.PropertyName == "IsFolderMenuVisible")
             Dispatcher.UIThread.Post(ScrollExplorerIntoView, DispatcherPriority.Loaded);
         if (e.PropertyName == "IsHelpVisible" || e.PropertyName == "IsInfoVisible" ||
-            e.PropertyName == "IsFolderMenuVisible" || e.PropertyName == "IsToastVisible" ||
+            e.PropertyName == "IsFolderMenuVisible" || e.PropertyName == "IsSettingsVisible" ||
+            e.PropertyName == "IsToastVisible" ||
             e.PropertyName == "IsPausedVisible" || e.PropertyName == "IsLoadingVisible" ||
             e.PropertyName == "IsHintVisible")
             SyncVideoChrome();
+    }
+
+    // Rebuilds key chords from the live config after a remap.
+    // Returns nothing.
+    private void ReloadControlsFromConfig()
+    {
+        if (_viewModel.Playback == null || _viewModel.Playback.Config == null)
+            return;
+        LoadControls(_viewModel.Playback.Config);
+    }
+
+    // Copies skip and seek lengths from the live config.
+    // Returns nothing.
+    private void ReloadSkipSeek()
+    {
+        if (_viewModel.Playback == null || _viewModel.Playback.Config == null)
+            return;
+        var config = _viewModel.Playback.Config;
+        _skipCount = config.SkipCount;
+        _seekSeconds = config.SeekSeconds;
+        _seekFastSeconds = config.SeekFastSeconds;
     }
 
     // Hides the video only while a large menu covers it.
@@ -81,7 +106,8 @@ public partial class MainWindow : Window
         if (_slideVideo == null)
             return;
         bool obscured = _viewModel.IsHelpVisible ||
-            _viewModel.IsFolderMenuVisible;
+            _viewModel.IsFolderMenuVisible ||
+            _viewModel.IsSettingsVisible;
         _slideVideo.SetObscured(obscured);
     }
 
@@ -114,8 +140,16 @@ public partial class MainWindow : Window
 
         if (IsDescendantOf(e.Source, VideoProgressOverlay) ||
             IsDescendantOf(e.Source, FolderExplorer) ||
+            IsDescendantOf(e.Source, SettingsPanel) ||
             (PathButton != null && IsDescendantOf(e.Source, PathButton)))
         {
+            e.Handled = true;
+            return;
+        }
+
+        if (_viewModel.IsSettingsVisible)
+        {
+            _viewModel.HideSettings();
             e.Handled = true;
             return;
         }
@@ -173,7 +207,8 @@ public partial class MainWindow : Window
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-        if (_viewModel.Playback == null || _viewModel.IsFolderMenuVisible || _viewModel.IsHelpVisible)
+        if (_viewModel.Playback == null || _viewModel.IsFolderMenuVisible ||
+            _viewModel.IsHelpVisible || _viewModel.IsSettingsVisible)
             return;
 
         bool ctrl = e.KeyModifiers.HasFlag(KeyModifiers.Control);

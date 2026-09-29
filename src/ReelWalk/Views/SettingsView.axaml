@@ -1,0 +1,217 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ReelWalk.Views"
+             xmlns:models="using:ReelWalk.Models"
+             x:Class="ReelWalk.Views.SettingsView"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center"
+             IsVisible="{Binding IsSettingsVisible}">
+    <Border Background="#141414F0"
+            Padding="22,18"
+            MinWidth="420"
+            MaxWidth="720"
+            MaxHeight="820"
+            CornerRadius="12">
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+                <TextBlock Text="Settings"
+                           Foreground="White"
+                           FontSize="22"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="Changes apply now. Library folders stay in ReelWalk.toml."
+                           Margin="0,4,0,0"
+                           Foreground="#CCCCCC"
+                           FontSize="12"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+            <TextBlock DockPanel.Dock="Bottom"
+                       Margin="0,12,0,0"
+                       Text="Click outside or press Escape to close. Escape cancels a key capture."
+                       Foreground="#AAAAAA"
+                       FontSize="12"
+                       TextWrapping="Wrap"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="16" Margin="0,0,28,0">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Display" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                            <TextBlock Text="Duration (s)" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Column="1"
+                                               Minimum="1" Maximum="60" Increment="1"
+                                               FormatString="0.0"
+                                               Value="{Binding SettingsDuration}"/>
+                            <TextBlock Grid.Row="1" Text="Transition %" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Row="1" Grid.Column="1"
+                                               Minimum="0" Maximum="100" Increment="1"
+                                               FormatString="0.0"
+                                               Value="{Binding SettingsTransitionPercent}"/>
+                            <TextBlock Grid.Row="2" Text="Fit" Foreground="White" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                <Button Content="Contain" Classes="mode"
+                                        Classes.hot="{Binding SettingsFitIsContain}"
+                                        Command="{Binding SetSettingsFitCommand}"
+                                        CommandParameter="Contain"/>
+                                <Button Content="Cover" Classes="mode"
+                                        Classes.hot="{Binding SettingsFitIsCover}"
+                                        Command="{Binding SetSettingsFitCommand}"
+                                        CommandParameter="Cover"/>
+                            </StackPanel>
+                            <TextBlock Grid.Row="3" Text="Volume" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Row="3" Grid.Column="1"
+                                               Minimum="0" Maximum="1" Increment="0.05"
+                                               FormatString="0.00"
+                                               Value="{Binding SettingsVolume}"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Playback" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="Mode" Foreground="#CCCCCC" FontSize="12"/>
+                        <WrapPanel>
+                            <Button Content="Random" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsModeIsRandom}"
+                                    Command="{Binding SetSettingsPlaybackModeCommand}"
+                                    CommandParameter="Random"/>
+                            <Button Content="Newest" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsModeIsNewest}"
+                                    Command="{Binding SetSettingsPlaybackModeCommand}"
+                                    CommandParameter="NewestFirst"/>
+                            <Button Content="Oldest" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsModeIsOldest}"
+                                    Command="{Binding SetSettingsPlaybackModeCommand}"
+                                    CommandParameter="OldestFirst"/>
+                            <Button Content="Sequential" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsModeIsSequential}"
+                                    Command="{Binding SetSettingsPlaybackModeCommand}"
+                                    CommandParameter="Sequential"/>
+                        </WrapPanel>
+                        <TextBlock Text="Show" Foreground="#CCCCCC" FontSize="12"/>
+                        <WrapPanel>
+                            <Button Content="Both" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsShowIsBoth}"
+                                    Command="{Binding SetSettingsMediaShowCommand}"
+                                    CommandParameter="Both"/>
+                            <Button Content="Images" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsShowIsImages}"
+                                    Command="{Binding SetSettingsMediaShowCommand}"
+                                    CommandParameter="Images"/>
+                            <Button Content="Videos" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsShowIsVideos}"
+                                    Command="{Binding SetSettingsMediaShowCommand}"
+                                    CommandParameter="Videos"/>
+                        </WrapPanel>
+                        <TextBlock Text="Folder play" Foreground="#CCCCCC" FontSize="12"/>
+                        <WrapPanel>
+                            <Button Content="Random" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsFolderIsRandom}"
+                                    Command="{Binding SetSettingsFolderModeCommand}"
+                                    CommandParameter="Random"/>
+                            <Button Content="Ordered" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsFolderIsOrdered}"
+                                    Command="{Binding SetSettingsFolderModeCommand}"
+                                    CommandParameter="Sequential"/>
+                        </WrapPanel>
+                        <Button Content="Include subfolders"
+                                Classes="mode"
+                                Classes.hot="{Binding SettingsFolderSubfolders}"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ToggleSettingsFolderSubfoldersCommand}"/>
+                        <Grid ColumnDefinitions="160,*" Margin="0,8,0,0">
+                            <TextBlock Text="History" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Column="1"
+                                               Minimum="1" Maximum="500" Increment="1"
+                                               FormatString="0"
+                                               Value="{Binding SettingsHistory}"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Transitions" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Content="Crossfade" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsFxCrossfade}"
+                                    Command="{Binding ToggleSettingsFxCrossfadeCommand}"/>
+                            <Button Content="MorphZoom" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsFxMorphZoom}"
+                                    Command="{Binding ToggleSettingsFxMorphZoomCommand}"/>
+                            <Button Content="SoftWipe" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsFxSoftWipe}"
+                                    Command="{Binding ToggleSettingsFxSoftWipeCommand}"/>
+                            <Button Content="ParallaxReveal" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsFxParallaxReveal}"
+                                    Command="{Binding ToggleSettingsFxParallaxRevealCommand}"/>
+                            <Button Content="ScaleDissolve" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsFxScaleDissolve}"
+                                    Command="{Binding ToggleSettingsFxScaleDissolveCommand}"/>
+                            <Button Content="Ken Burns" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsKenBurns}"
+                                    Command="{Binding ToggleSettingsKenBurnsCommand}"/>
+                        </WrapPanel>
+                        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto" RowSpacing="8">
+                            <TextBlock Text="Ken Burns (s)" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Column="1"
+                                               Minimum="0.5" Maximum="600" Increment="0.5"
+                                               FormatString="0.0"
+                                               Value="{Binding SettingsKenBurnsDuration}"/>
+                            <TextBlock Grid.Row="1" Text="Ken Burns zoom" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Row="1" Grid.Column="1"
+                                               Minimum="1" Maximum="3" Increment="0.1"
+                                               FormatString="0.0"
+                                               Value="{Binding SettingsKenBurnsMaxZoom}"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Controls" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+                            <TextBlock Text="Skip files" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Column="1"
+                                               Minimum="1" Maximum="500" Increment="1"
+                                               FormatString="0"
+                                               Value="{Binding SettingsSkip}"/>
+                            <TextBlock Grid.Row="1" Text="Seek (s)" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Row="1" Grid.Column="1"
+                                               Minimum="0.5" Maximum="600" Increment="1"
+                                               FormatString="0"
+                                               Value="{Binding SettingsSeekSeconds}"/>
+                            <TextBlock Grid.Row="2" Text="Seek fast (s)" Foreground="White" VerticalAlignment="Center"/>
+                            <local:BlueStepper Grid.Row="2" Grid.Column="1"
+                                               Minimum="0.5" Maximum="600" Increment="1"
+                                               FormatString="0"
+                                               Value="{Binding SettingsSeekFastSeconds}"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Keybinds" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="Click a binding, then press the new key combo."
+                                   Foreground="#CCCCCC"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"/>
+                        <ItemsControl ItemsSource="{Binding Keybinds}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:KeybindItem">
+                                    <Grid ColumnDefinitions="200,*" Margin="0,2">
+                                        <TextBlock Text="{Binding Title}"
+                                                   Foreground="White"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <Button Grid.Column="1"
+                                                Content="{Binding ButtonLabel}"
+                                                Classes="mode"
+                                                Classes.hot="{Binding IsCapturing}"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Left"
+                                                Command="{Binding $parent[UserControl].DataContext.BeginKeyCaptureCommand}"
+                                                CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </Border>
+</UserControl>

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Avalonia.Input;
 
 namespace ReelWalk.Services.Controls;
@@ -32,6 +33,40 @@ internal struct ControlChord
                 chord.Key = ParseKey(part);
         }
         return chord;
+    }
+
+    // Writes key and modifiers as toml text such as Ctrl+Shift+Right.
+    // Returns an empty string when key is None.
+    internal static string Format(Key key, KeyModifiers mods)
+    {
+        if (key == Key.None)
+            return "";
+        var sb = new StringBuilder(24);
+        if ((mods & KeyModifiers.Control) != 0)
+            sb.Append("Ctrl+");
+        if ((mods & KeyModifiers.Shift) != 0)
+            sb.Append("Shift+");
+        if ((mods & KeyModifiers.Alt) != 0)
+            sb.Append("Alt+");
+        sb.Append(FormatKeyName(key));
+        return sb.ToString();
+    }
+
+    // Short name for a key in toml chords.
+    // key is an Avalonia key. Returns its label.
+    private static string FormatKeyName(Key key)
+    {
+        if (key == Key.Escape)
+            return "Escape";
+        if (key == Key.Delete)
+            return "Delete";
+        if (key == Key.PageUp)
+            return "PageUp";
+        if (key == Key.PageDown)
+            return "PageDown";
+        if (key == Key.Back)
+            return "Back";
+        return key.ToString();
     }
 
     // True when key and the Ctrl, Shift, and Alt flags match this chord.

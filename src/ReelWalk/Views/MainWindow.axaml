@@ -119,6 +119,7 @@
         </Border>
 
         <local:FolderExplorerView x:Name="FolderExplorer"/>
+        <local:SettingsView x:Name="SettingsPanel"/>
 
         <Popup IsOpen="{Binding IsToastVisible}"
                PlacementTarget="{Binding #MainGrid}"

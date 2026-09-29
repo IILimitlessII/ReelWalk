@@ -71,4 +71,58 @@
         <Setter Property="Background" Value="#5B94F5"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
+
+    <!-- Custom stepper arrows: hardcoded blue, never OS accent. -->
+    <Style Selector="Button.spin">
+        <Setter Property="Background" Value="#2F7CF033"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="3"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="Button.spin:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2F7CF0"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.spin:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#2563EB"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- Settings text fields: selection/caret/focus all blue. -->
+    <Style Selector="TextBox.bluefield">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CaretBrush" Value="#5B94F5"/>
+        <Setter Property="SelectionBrush" Value="#2F7CF088"/>
+        <Setter Property="SelectionForegroundBrush" Value="White"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="TextBox.bluefield:focus">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CaretBrush" Value="#5B94F5"/>
+        <Setter Property="SelectionBrush" Value="#2F7CF088"/>
+    </Style>
+    <Style Selector="TextBox.bluefield /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    <Style Selector="TextBox.bluefield:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    <Style Selector="TextBox.bluefield:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ScrollBar /template/ Thumb">
+        <Setter Property="Background" Value="#2F7CF066"/>
+    </Style>
+    <Style Selector="ScrollBar /template/ Thumb:pointerover">
+        <Setter Property="Background" Value="#2F7CF0"/>
+    </Style>
 </Styles>

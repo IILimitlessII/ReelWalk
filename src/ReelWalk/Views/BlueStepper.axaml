@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ReelWalk.Views.BlueStepper"
+             MinWidth="120">
+    <UserControl.Styles>
+        <!-- Full templates — no Fluent resources, so OS yellow cannot appear. -->
+        <Style Selector="TextBox.bluefield">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#152238"/>
+            <Setter Property="CaretBrush" Value="#5B94F5"/>
+            <Setter Property="SelectionBrush" Value="#2F7CF088"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="#152238"
+                            Padding="{TemplateBinding Padding}">
+                        <TextPresenter Name="PART_TextPresenter"
+                                       Text="{TemplateBinding Text}"
+                                       CaretIndex="{TemplateBinding CaretIndex}"
+                                       SelectionStart="{TemplateBinding SelectionStart}"
+                                       SelectionEnd="{TemplateBinding SelectionEnd}"
+                                       TextAlignment="{TemplateBinding TextAlignment}"
+                                       TextWrapping="{TemplateBinding TextWrapping}"
+                                       PasswordChar="{TemplateBinding PasswordChar}"
+                                       RevealPassword="{TemplateBinding RevealPassword}"
+                                       CaretBrush="#5B94F5"
+                                       SelectionBrush="#2F7CF088"
+                                       SelectionForegroundBrush="White"
+                                       TextElement.Foreground="White"
+                                       TextElement.FontSize="14"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button.spin">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#2F7CF044"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="3">
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          TextElement.Foreground="White"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          FontSize="{TemplateBinding FontSize}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button.spin:pointerover">
+            <Setter Property="Background" Value="#2F7CF0"/>
+        </Style>
+        <Style Selector="Button.spin:pressed">
+            <Setter Property="Background" Value="#2563EB"/>
+        </Style>
+    </UserControl.Styles>
+    <Border Background="#152238"
+            BorderBrush="#2F7CF0"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="2">
+        <Grid ColumnDefinitions="*,28">
+            <TextBox x:Name="Field"
+                     Classes="bluefield"
+                     VerticalAlignment="Stretch"
+                     KeyDown="Field_KeyDown"
+                     LostFocus="Field_LostFocus"/>
+            <StackPanel Grid.Column="1" Spacing="1" Margin="2,0,0,0">
+                <Button Classes="spin"
+                        Content="▲"
+                        Height="16"
+                        FontSize="9"
+                        Click="Up_Click"/>
+                <Button Classes="spin"
+                        Content="▼"
+                        Height="16"
+                        FontSize="9"
+                        Click="Down_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

@@ -18,7 +18,7 @@ internal sealed partial class MainViewModel : ObservableObject
     private DateTime _queryAt;
     private readonly DispatcherTimer _toastHide;
 
-    [ObservableProperty] private string _hintText = "H  controls     F or right-click  folders     wheel  next     Space  pause";
+    [ObservableProperty] private string _hintText = "H  controls     P  settings     F or right-click  folders     wheel  next     Space  pause";
     [ObservableProperty] private string _loadingText = "";
     [ObservableProperty] private bool _isLoadingVisible;
     [ObservableProperty] private string _indexStatus = "";
@@ -84,6 +84,7 @@ internal sealed partial class MainViewModel : ObservableObject
     {
         _controls = config;
         HintText = KeyName("help") + "  controls     " +
+            KeyName("settings") + "  settings     " +
             KeyName("folder") + " or right-click  folders     wheel  next     " +
             KeyName("pause") + "  pause";
     }
@@ -165,6 +166,4 @@ internal sealed partial class MainViewModel : ObservableObject
         IsFolderMenuVisible = false;
         SyncUiHold();
     }
-
-
 }

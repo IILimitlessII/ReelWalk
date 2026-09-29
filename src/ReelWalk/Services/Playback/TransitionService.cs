@@ -36,6 +36,7 @@ internal sealed partial class TransitionService
 
     internal bool EnableKenBurns { get; set; }
     internal double KenBurnsMaxZoom { get; set; }
+    internal double KenBurnsDuration { get; set; }
     internal double VideoVolume { get; set; }
     internal List<TransitionType> TransitionPool { get; set; }
     internal TransitionType LastTransition { get; private set; }
@@ -59,6 +60,7 @@ internal sealed partial class TransitionService
 
         EnableKenBurns = true;
         KenBurnsMaxZoom = 1.3;
+        KenBurnsDuration = 10.0;
         VideoVolume = 1.0;
         TransitionPool = new List<TransitionType> {
             TransitionType.Crossfade,

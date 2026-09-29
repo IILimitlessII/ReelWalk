@@ -17,6 +17,7 @@ internal sealed partial class MainViewModel
         }
 
         HideFolderMenu();
+        HideSettings();
         HelpText = BuildHelpText();
         IsHelpVisible = true;
         IsHintVisible = false;
@@ -39,6 +40,7 @@ internal sealed partial class MainViewModel
             return;
 
         HideHelp();
+        HideSettings();
         var here = _playback.CurrentDirectory();
         int ignoredTotal;
         int ignoredDirect;

@@ -102,6 +102,7 @@ internal sealed partial class PlaybackService : IDisposable
         {
             EnableKenBurns = config.EnableKenBurns,
             KenBurnsMaxZoom = config.KenBurnsMaxZoom,
+            KenBurnsDuration = config.KenBurnsDuration,
             VideoVolume = config.VideoVolume,
             TransitionPool = ParseTransitionPool(config.ActiveTransitions)
         };

@@ -38,7 +38,8 @@ internal sealed partial class MainViewModel
             "A photo that will not open is skipped.\n" +
             "New files are picked up on their own.\n" +
             "\n" +
-            KeyName("info") + " — file info     " + KeyName("help") + " — this help     " + KeyName("ken_burns") + " — Ken Burns\n" +
+            KeyName("info") + " — file info     " + KeyName("help") + " — this help     " + KeyName("settings") + " — settings\n" +
+            KeyName("ken_burns") + " — Ken Burns\n" +
             KeyName("fit") + " — whole picture or fill the screen\n" +
             KeyName("copy") + " — copy the file path     " + KeyName("open") + " — show it in Explorer\n" +
             KeyName("delete") + " — delete, asks first     " + KeyName("delete_now") + " — delete now\n" +
@@ -59,7 +60,7 @@ internal sealed partial class MainViewModel
     private void SyncUiHold()
     {
         if (_playback != null)
-            _playback.SetUiHold(IsFolderMenuVisible || IsHelpVisible);
+            _playback.SetUiHold(IsFolderMenuVisible || IsHelpVisible || IsSettingsVisible);
     }
 
     // Formats a video clock.

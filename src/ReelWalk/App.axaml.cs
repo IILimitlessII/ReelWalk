@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Threading;
 using ReelWalk.Services;
 using ReelWalk.Views;
@@ -18,6 +19,27 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        ForceBlueAccent();
+    }
+
+    // Pins every SystemAccent* color to ReelWalk blue so OS yellow cannot leak in.
+    // Returns nothing.
+    private void ForceBlueAccent()
+    {
+        var accent = Color.Parse("#2F7CF0");
+        var dark1 = Color.Parse("#2563EB");
+        var dark2 = Color.Parse("#1D4ED8");
+        var dark3 = Color.Parse("#1E3A8A");
+        var light1 = Color.Parse("#5B94F5");
+        var light2 = Color.Parse("#93B8F8");
+        var light3 = Color.Parse("#BFDBFE");
+        Resources["SystemAccentColor"] = accent;
+        Resources["SystemAccentColorDark1"] = dark1;
+        Resources["SystemAccentColorDark2"] = dark2;
+        Resources["SystemAccentColorDark3"] = dark3;
+        Resources["SystemAccentColorLight1"] = light1;
+        Resources["SystemAccentColorLight2"] = light2;
+        Resources["SystemAccentColorLight3"] = light3;
     }
 
     // Keeps a single instance, then opens the slideshow or the first-launch note.

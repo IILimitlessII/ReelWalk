@@ -162,10 +162,11 @@ internal sealed partial class TransitionService
     }
 
     // Slow pan and zoom on the visible still.
-    // duration is the move length in seconds. Returns nothing.
+    // duration is the photo length; KenBurnsDuration overrides when set. Returns nothing.
     private void StartKenBurns(ScaleTransform scale, TranslateTransform translate, double duration)
     {
-        double dur = Math.Max(duration, 2.0);
+        double move = KenBurnsDuration > 0.5 ? KenBurnsDuration : duration;
+        double dur = Math.Max(move, 2.0);
         var ts = TimeSpan.FromSeconds(dur);
         bool zoomIn = random.Next(2) == 0;
         double s1 = zoomIn ? KenBurnsMaxZoom : 1.0;

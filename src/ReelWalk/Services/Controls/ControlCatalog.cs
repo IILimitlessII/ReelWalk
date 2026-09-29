@@ -33,6 +33,7 @@ internal static class ControlCatalog
         new[] { "info", "I" },
         new[] { "help", "H" },
         new[] { "help_alt", "F1" },
+        new[] { "settings", "P" },
         new[] { "open", "O" },
         new[] { "delete", "Delete" },
         new[] { "delete_now", "Ctrl+Delete" },

@@ -35,6 +35,19 @@ public partial class MainWindow
         var key = e.Key;
         _mods = e.KeyModifiers;
 
+        if (_viewModel.TryCaptureKey(key, _mods))
+        {
+            e.Handled = true;
+            return;
+        }
+
+        if (Pressed(key, "settings"))
+        {
+            _viewModel.ToggleSettings();
+            e.Handled = true;
+            return;
+        }
+
         if (Pressed(key, "folder"))
         {
             _viewModel.ToggleFolderMenu();
@@ -45,6 +58,16 @@ public partial class MainWindow
         if (_viewModel.IsFolderMenuVisible && ExplorerKey(key, e))
         {
             e.Handled = true;
+            return;
+        }
+
+        if (_viewModel.IsSettingsVisible)
+        {
+            if (Pressed(key, "close"))
+            {
+                _viewModel.HideSettings();
+                e.Handled = true;
+            }
             return;
         }
 
@@ -59,6 +82,8 @@ public partial class MainWindow
         {
             if (_viewModel.IsFolderMenuVisible)
                 _viewModel.HideFolderMenu();
+            else if (_viewModel.IsSettingsVisible)
+                _viewModel.HideSettings();
             else if (_viewModel.IsHelpVisible)
                 _viewModel.HideHelp();
             else
