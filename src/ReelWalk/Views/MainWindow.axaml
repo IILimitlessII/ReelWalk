@@ -1,0 +1,226 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:ReelWalk.Views"
+        xmlns:vlc="using:LibVLCSharp.Avalonia"
+        x:Class="ReelWalk.Views.MainWindow"
+        Title="ReelWalk"
+        SystemDecorations="None"
+        WindowState="FullScreen"
+        Background="Black"
+        Foreground="White"
+        Focusable="True"
+        KeyDown="Window_KeyDown">
+    <Grid x:Name="MainGrid" ClipToBounds="True">
+        <Image x:Name="Image1"
+               Stretch="Uniform"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               RenderTransformOrigin="50%,50%"
+               IsHitTestVisible="False">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    <TranslateTransform X="0" Y="0"/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+
+        <Image x:Name="Image2"
+               Stretch="Uniform"
+               Opacity="0"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               RenderTransformOrigin="50%,50%"
+               IsHitTestVisible="False">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    <TranslateTransform X="0" Y="0"/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+
+        <vlc:VideoView x:Name="VideoPlayer"
+                       IsVisible="False"
+                       IsHitTestVisible="False"/>
+
+        <Popup IsOpen="{Binding IsPathVisible}"
+               PlacementTarget="{Binding #MainGrid}"
+               Placement="AnchorAndGravity"
+               PlacementAnchor="TopLeft"
+               PlacementGravity="BottomRight"
+               HorizontalOffset="8"
+               VerticalOffset="4"
+               IsLightDismissEnabled="False"
+               Topmost="True">
+            <Button x:Name="PathButton"
+                    Command="{Binding ToggleFolderMenuCommand}"
+                    ToolTip.Tip="Folder explorer"
+                    MaxWidth="920"
+                    Background="#00000099"
+                    BorderThickness="0"
+                    Padding="6,2"
+                    Cursor="Hand"
+                    Focusable="False">
+                <TextBlock Text="{Binding PathText}"
+                           Foreground="White"
+                           FontSize="12"
+                           TextTrimming="CharacterEllipsis"/>
+            </Button>
+        </Popup>
+
+        <Popup IsOpen="{Binding IsInfoVisible}"
+               PlacementTarget="{Binding #MainGrid}"
+               Placement="AnchorAndGravity"
+               PlacementAnchor="TopLeft"
+               PlacementGravity="BottomRight"
+               HorizontalOffset="24"
+               VerticalOffset="24"
+               IsLightDismissEnabled="False"
+               Topmost="True">
+            <Border Background="#141414D8"
+                    BorderBrush="#FFFFFF44"
+                    BorderThickness="1"
+                    Padding="18,16"
+                    MaxWidth="560"
+                    CornerRadius="10">
+                <TextBlock Text="{Binding InfoText}"
+                           Foreground="White"
+                           FontSize="15"
+                           LineHeight="22"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </Popup>
+
+        <Border Background="#141414F0"
+                Padding="28,22"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                MaxWidth="620"
+                CornerRadius="12"
+                IsVisible="{Binding IsHelpVisible}">
+            <StackPanel>
+                <TextBlock Text="Controls"
+                           Foreground="White"
+                           FontSize="22"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding HelpText}"
+                           Margin="0,12,0,0"
+                           Foreground="White"
+                           FontSize="14"
+                           LineHeight="22"
+                           TextWrapping="Wrap"/>
+                <TextBlock Text="Click anywhere, or press H, to close"
+                           Margin="0,14,0,0"
+                           Foreground="White"
+                           FontSize="12"/>
+            </StackPanel>
+        </Border>
+
+        <local:FolderExplorerView x:Name="FolderExplorer"/>
+
+        <Popup IsOpen="{Binding IsToastVisible}"
+               PlacementTarget="{Binding #MainGrid}"
+               Placement="Center"
+               IsLightDismissEnabled="False"
+               Topmost="True"
+               IsHitTestVisible="False">
+            <Border Background="#141414E0"
+                    BorderBrush="#FFFFFF44"
+                    BorderThickness="1"
+                    Padding="22,14"
+                    CornerRadius="10"
+                    IsHitTestVisible="False">
+                <TextBlock Text="{Binding ToastText}"
+                           Foreground="White"
+                           FontSize="{Binding ToastFontSize}"
+                           TextAlignment="Center"/>
+            </Border>
+        </Popup>
+
+        <Border Background="#101010D0"
+                Padding="28,14"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,78"
+                CornerRadius="10"
+                IsVisible="{Binding IsPausedVisible}"
+                IsHitTestVisible="False">
+            <TextBlock Text="Paused"
+                       Foreground="White"
+                       FontSize="22"
+                       FontWeight="SemiBold"/>
+        </Border>
+
+        <Border Background="#101010D0"
+                Padding="22,14"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="10"
+                IsVisible="{Binding IsLoadingVisible}"
+                IsHitTestVisible="False">
+            <TextBlock Text="{Binding LoadingText}"
+                       Foreground="White"
+                       FontSize="16"/>
+        </Border>
+
+        <TextBlock Text="{Binding IndexStatus}"
+                   Foreground="White"
+                   FontSize="13"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="0,18,0,0"
+                   IsVisible="{Binding IsIndexVisible}"
+                   IsHitTestVisible="False"/>
+
+        <Border Background="#00000099"
+                Padding="14,8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,64"
+                CornerRadius="8"
+                IsVisible="{Binding IsHintVisible}"
+                IsHitTestVisible="False">
+            <TextBlock Text="{Binding HintText}"
+                       Foreground="White"
+                       FontSize="13"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       MaxWidth="640"/>
+        </Border>
+
+        <Grid x:Name="VideoProgressOverlay"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Height="48"
+              Background="Transparent"
+              Cursor="Hand"
+              IsVisible="{Binding IsVideoProgressVisible}"
+              PointerPressed="VideoProgress_PointerPressed"
+              PointerMoved="VideoProgress_PointerMoved"
+              PointerReleased="VideoProgress_PointerReleased"
+              PointerCaptureLost="VideoProgress_PointerCaptureLost">
+            <TextBlock Text="{Binding VideoTimeText}"
+                       Foreground="White"
+                       FontSize="13"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,16,12"
+                       IsHitTestVisible="False"/>
+            <Border Height="3"
+                    VerticalAlignment="Bottom"
+                    Background="#FFFFFF33"
+                    IsHitTestVisible="False"/>
+            <Rectangle Height="3"
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Stretch"
+                       Fill="#FFFFFFEE"
+                       IsHitTestVisible="False"
+                       RenderTransformOrigin="0%,50%">
+                <Rectangle.RenderTransform>
+                    <ScaleTransform ScaleX="{Binding VideoProgress}"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </Grid>
+    </Grid>
+</Window>

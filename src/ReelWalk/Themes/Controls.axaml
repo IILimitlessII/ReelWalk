@@ -1,0 +1,37 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="Button.folder">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#F2F2F2"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.folder:pointerover">
+        <Setter Property="Background" Value="#FFFFFF33"/>
+    </Style>
+    <Style Selector="Button.folder.selected">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="#FFFFFF44"/>
+    </Style>
+    <Style Selector="Button.mode">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.mode:pointerover">
+        <Setter Property="Background" Value="#FFFFFF22"/>
+    </Style>
+    <Style Selector="Button.mode.hot">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="#FFFFFF33"/>
+    </Style>
+</Styles>

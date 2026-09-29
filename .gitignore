@@ -1,0 +1,16 @@
+# Build
+[Bb]in/
+[Oo]bj/
+build/
+
+# IDE / OS
+.vs/
+.vscode/
+*.user
+*.userprefs
+Thumbs.db
+Desktop.ini
+
+# Local runtime config / cache beside the binary
+ReelWalk.toml
+ReelWalk.library

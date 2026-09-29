@@ -1,0 +1,199 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ReelWalk.Views.FolderExplorerView"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center"
+             IsVisible="{Binding IsFolderMenuVisible}">
+    <Border Background="#141414F0"
+            Padding="22,18"
+            MinWidth="280"
+            MaxWidth="980"
+            CornerRadius="12">
+        <StackPanel>
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0,0,16,0">
+                    <TextBlock Text="{Binding ExplorerTitle}"
+                               Foreground="White"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding ExplorerDetail}"
+                               Margin="0,2,0,0"
+                               Foreground="White"
+                               FontSize="13"
+                               TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                    <Button Content="Random"
+                            Classes="mode"
+                            Classes.hot="{Binding FolderPlayIsRandom}"
+                            Command="{Binding SetFolderPlayRandomCommand}"/>
+                    <Button Content="Ordered"
+                            Classes="mode"
+                            Classes.hot="{Binding !FolderPlayIsRandom}"
+                            Margin="8,0,0,0"
+                            Command="{Binding SetFolderPlayOrderedCommand}"/>
+                    <Button Content="Subfolders"
+                            Classes="mode"
+                            Classes.hot="{Binding FolderIncludesSubfolders}"
+                            Margin="8,0,0,0"
+                            Command="{Binding SetFolderSubfoldersCommand}"/>
+                    <Button Content="This folder"
+                            Classes="mode"
+                            Classes.hot="{Binding !FolderIncludesSubfolders}"
+                            Margin="8,0,0,0"
+                            Command="{Binding SetFolderThisOnlyCommand}"/>
+                </StackPanel>
+            </Grid>
+            <TextBlock Text="{Binding ExplorerQueryLabel}"
+                       Margin="0,0,0,8"
+                       Foreground="White"
+                       FontSize="14"
+                       IsVisible="{Binding HasExplorerQuery}"/>
+            <ScrollViewer MaxHeight="72">
+                <ItemsControl ItemsSource="{Binding FolderChoices}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <TextBlock Text="\"
+                                           Margin="2,0,2,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="White"
+                                           FontSize="16"
+                                           IsVisible="{Binding ShowSeparator}"/>
+                                <Button Content="{Binding Name}"
+                                        Classes="folder"
+                                        Classes.selected="{Binding IsSelected}"
+                                        ToolTip.Tip="Open this folder"
+                                        Focusable="False"
+                                        HorizontalAlignment="Left"
+                                        FontSize="16"
+                                        Padding="8,4"
+                                        Command="{Binding $parent[Window].DataContext.OpenExplorerFolderCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <ListBox x:Name="ExplorerList"
+                     ItemsSource="{Binding ExplorerFolders}"
+                     SelectedItem="{Binding SelectedExplorer, Mode=OneWay}"
+                     Margin="0,10,0,0"
+                     MaxHeight="420"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Foreground="White"
+                     Focusable="False"
+                     IsVisible="{Binding HasExplorerFolders}">
+                <ListBox.Resources>
+                    <ControlTheme x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Focusable" Value="False"/>
+                        <Setter Property="Template">
+                            <ControlTemplate>
+                                <ContentPresenter Background="{TemplateBinding Background}"
+                                                  Foreground="{TemplateBinding Foreground}"
+                                                  Padding="{TemplateBinding Padding}"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                            </ControlTemplate>
+                        </Setter>
+                        <Style Selector="^:pointerover">
+                            <Setter Property="Background" Value="#FFFFFF22"/>
+                        </Style>
+                        <Style Selector="^:selected">
+                            <Setter Property="Background" Value="#1D4ED8"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Style>
+                        <Style Selector="^:selected:pointerover">
+                            <Setter Property="Background" Value="#2563EB"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Style>
+                    </ControlTheme>
+                </ListBox.Resources>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0"
+                                    Classes="folder"
+                                    Classes.selected="{Binding IsSelected}"
+                                    Focusable="False"
+                                    ToolTip.Tip="{Binding ToolTipText}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    Command="{Binding $parent[Window].DataContext.PlayFolderChoiceCommand}"
+                                    CommandParameter="{Binding}">
+                                <DockPanel LastChildFill="True">
+                                    <TextBlock DockPanel.Dock="Right"
+                                               Text="{Binding CountLabel}"
+                                               Margin="16,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Foreground="White"
+                                               FontSize="13"/>
+                                    <TextBlock DockPanel.Dock="Left"
+                                               Text="Now"
+                                               Margin="0,0,8,0"
+                                               VerticalAlignment="Center"
+                                               Foreground="White"
+                                               FontSize="12"
+                                               IsVisible="{Binding IsHere}"/>
+                                    <TextBlock Text="{Binding Name}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"/>
+                                </DockPanel>
+                            </Button>
+                            <Button Grid.Column="1"
+                                    Content="Open"
+                                    Classes="mode"
+                                    Margin="6,0,0,0"
+                                    Focusable="False"
+                                    ToolTip.Tip="Look inside this folder"
+                                    Command="{Binding $parent[Window].DataContext.OpenExplorerFolderCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding HasChildren}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Text="{Binding ExplorerEmptyText}"
+                       Margin="0,10,0,0"
+                       Foreground="White"
+                       FontSize="13"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding ExplorerIsEmpty}"/>
+            <Button Content="{Binding PlayBrowseLabel}"
+                    Classes="folder"
+                    Margin="0,12,0,0"
+                    Focusable="False"
+                    Command="{Binding PlayBrowseFolderCommand}"
+                    IsVisible="{Binding CanPlayBrowse}"/>
+            <Button Content="Resume library"
+                    Classes="folder"
+                    Margin="0,8,0,0"
+                    Focusable="False"
+                    Command="{Binding StopFolderPlayCommand}"
+                    IsVisible="{Binding IsFolderPlaying}"/>
+            <TextBlock Text="Type to find a folder. Enter plays it. Right opens it. Left goes back."
+                       Margin="0,12,0,0"
+                       Foreground="White"
+                       FontSize="12"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+    </Border>
+</UserControl>
