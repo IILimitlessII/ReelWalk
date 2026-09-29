@@ -12,6 +12,19 @@ public sealed partial class FolderChoice : ObservableObject
     public int FileCount { get; set; }
     public bool HasChildren { get; set; }
     public bool IsHere { get; set; }
+    public bool IsIgnored { get; set; }
+
+    public string StatusLabel
+    {
+        get
+        {
+            if (IsIgnored)
+                return "Ignored";
+            if (IsHere)
+                return "Now";
+            return "";
+        }
+    }
 
     public string CountLabel
     {

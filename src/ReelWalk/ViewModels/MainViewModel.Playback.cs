@@ -67,6 +67,7 @@ internal sealed partial class MainViewModel
             _playback.FolderPlayMode, "Random", StringComparison.OrdinalIgnoreCase);
         FolderIncludesSubfolders = _playback.FolderIncludeSubfolders;
         IsFolderPlaying = _playback.IsFolderPlay;
+        RefreshExplorerLibraryLists();
         IsFolderMenuVisible = true;
         IsHintVisible = false;
         SyncUiHold();

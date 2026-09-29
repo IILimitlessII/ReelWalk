@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using SkiaSharp;
 using ReelWalk.Services;
@@ -30,6 +32,7 @@ public partial class MainWindow
                     return System.Threading.Tasks.Task.CompletedTask;
                 return clipboard.SetTextAsync(text);
             };
+            _viewModel.PickFolderAsync = PickFolderAsync;
 
             var configPath = ConfigService.FilePath;
             var config = ConfigService.LoadConfig(configPath);
@@ -224,5 +227,19 @@ public partial class MainWindow
                 return new WindowIcon(stream);
             }
         }
+    }
+
+    // Asks the user to pick a folder.
+    // Returns the local path, or null when cancelled.
+    private async Task<string> PickFolderAsync()
+    {
+        var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = "Choose a folder",
+            AllowMultiple = false
+        });
+        if (folders == null || folders.Count == 0)
+            return null;
+        return folders[0].TryGetLocalPath();
     }
 }

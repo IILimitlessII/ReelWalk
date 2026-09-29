@@ -88,6 +88,12 @@ internal sealed partial class MainViewModel
 
     // Moves the explorer to the parent folder.
     // From a library root it returns to the library list. Returns nothing.
+    [RelayCommand]
+    internal void ExplorerGoUp()
+    {
+        GoExplorerUp();
+    }
+
     internal void GoExplorerUp()
     {
         if (_playback == null || string.IsNullOrEmpty(_browsePath))
@@ -155,18 +161,41 @@ internal sealed partial class MainViewModel
             : string.Format("Volume {0:0}%", _playback.CurrentVideoVolume * 100), false);
     }
 
+    // Toggles ignore on one folder row.
+    // parameter is a FolderChoice. Returns nothing.
+    [RelayCommand]
+    private void ToggleFolderIgnore(object parameter)
+    {
+        var choice = parameter as FolderChoice;
+        if (choice == null || string.IsNullOrEmpty(choice.FullPath) || _playback == null)
+            return;
+        bool nowIgnored = _playback.ToggleIgnorePath(choice.FullPath);
+        ShowToast(nowIgnored ? "Folder ignored" : "Folder no longer ignored", false);
+        RefreshExplorerLibraryLists();
+        RefreshExplorer();
+        Save();
+    }
+
     // Shows the folder that was clicked in the path or the Open button.
-    // parameter is a FolderChoice. An empty path returns to the library list.
+    // parameter is a FolderChoice or a path string. An empty path returns to the library list.
     [RelayCommand]
     private void OpenExplorerFolder(object parameter)
     {
         var choice = parameter as FolderChoice;
-        if (choice == null)
-            return;
-        if (string.IsNullOrEmpty(choice.FullPath))
+        string path = null;
+        if (choice != null)
+            path = choice.FullPath;
+        else if (parameter is LibraryPathItem lib)
+            path = lib.FullPath;
+        else if (parameter is IgnorePathItem ign)
+            path = ign.FullPath;
+        else
+            path = parameter as string;
+
+        if (string.IsNullOrEmpty(path))
             _browsePath = null;
         else
-            _browsePath = choice.FullPath;
+            _browsePath = path;
         _selectPath = null;
         RefreshExplorer();
     }
@@ -257,6 +286,8 @@ internal sealed partial class MainViewModel
             }
         }
         FolderChoices = crumbs;
+        RefreshExplorerLibraryLists();
+        SyncExplorerBrowseFlags();
         ApplyQuery(pick);
     }
 

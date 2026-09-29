@@ -26,8 +26,40 @@ internal static class DesktopService
             }
 
             var folder = Path.GetDirectoryName(path);
-            if (string.IsNullOrEmpty(folder))
+            OpenFolder(folder);
+        }
+        catch { }
+    }
+
+    // Opens folder in the system file browser.
+    // folder must exist. Returns nothing when missing.
+    internal static void OpenFolder(string folder)
+    {
+        if (string.IsNullOrEmpty(folder))
+            return;
+        try
+        {
+            if (!Directory.Exists(folder))
                 return;
+        }
+        catch
+        {
+            return;
+        }
+
+        try
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = "\"" + folder + "\"",
+                    UseShellExecute = true
+                });
+                return;
+            }
+
             Process.Start(new ProcessStartInfo
             {
                 FileName = "xdg-open",

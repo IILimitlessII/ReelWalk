@@ -111,9 +111,23 @@ internal sealed partial class PlaybackService
         directFiles = 0;
         if (imageManager == null)
             return new List<FolderChoice>();
+        List<FolderChoice> list;
         if (string.IsNullOrEmpty(directory))
-            return imageManager.ListRoots(config == null ? null : config.ImagePaths, out totalFiles);
-        return imageManager.ListChildFolders(directory, out totalFiles, out directFiles);
+            list = imageManager.ListRoots(config == null ? null : config.ImagePaths, out totalFiles);
+        else
+            list = imageManager.ListChildFolders(directory, out totalFiles, out directFiles);
+        MarkIgnoredFolders(list);
+        return list;
+    }
+
+    // Sets IsIgnored on each row from the configured ignore list.
+    // list may be null. Returns nothing.
+    private void MarkIgnoredFolders(List<FolderChoice> list)
+    {
+        if (list == null)
+            return;
+        for (int i = 0; i < list.Count; i++)
+            list[i].IsIgnored = IsPathIgnored(list[i].FullPath);
     }
 
     // Path segments from the drive down to directory.
