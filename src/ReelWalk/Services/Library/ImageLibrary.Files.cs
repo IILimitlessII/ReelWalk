@@ -26,6 +26,7 @@ internal sealed partial class ImageLibrary : IDisposable
         if (knownPaths != null)
             knownPaths.Remove(path);
         playbackOrder.RemoveAt(currentIndex);
+        NotePlaybackRemoved(path, currentIndex);
         history.Shift(currentIndex);
         if (savedPlaybackOrder != null)
         {
@@ -112,6 +113,7 @@ internal sealed partial class ImageLibrary : IDisposable
         allImagePaths = keepAll;
         normalizedAll = keepNorm;
         FilterPlayList(ref playbackOrder, exact, prefixes, ref currentIndex);
+        RebuildPlaybackIndex();
         if (savedPlaybackOrder != null)
         {
             int ignored = 0;
@@ -263,17 +265,93 @@ internal sealed partial class ImageLibrary : IDisposable
     }
 
     // Index of path in files.
-    // Returns -1 when it is missing.
-    private static int FindPath(List<string> files, string path)
+    // The live playlist is a dictionary lookup. Any other list is scanned. Returns -1 when it is missing.
+    private int FindPath(List<string> files, string path)
     {
         if (files == null || string.IsNullOrEmpty(path))
             return -1;
+        if (ReferenceEquals(files, playbackOrder))
+        {
+            int idx;
+            if (playbackIndex.TryGetValue(path, out idx) &&
+                idx >= 0 && idx < playbackOrder.Count &&
+                Paths.Same(playbackOrder[idx], path))
+                return idx;
+            return -1;
+        }
         for (int i = 0; i < files.Count; i++)
         {
             if (Paths.Same(files[i], path))
                 return i;
         }
         return -1;
+    }
+
+    // Fills the playlist index after the order is replaced or shuffled.
+    // Returns nothing.
+    private void RebuildPlaybackIndex()
+    {
+        playbackIndex.Clear();
+        if (playbackOrder == null)
+            return;
+        for (int i = 0; i < playbackOrder.Count; i++)
+            RememberPlaybackIndex(playbackOrder[i], i);
+    }
+
+    // Records paths appended to the playlist, starting at from.
+    // Returns nothing.
+    private void NotePlaybackAdded(int from)
+    {
+        if (playbackOrder == null)
+            return;
+        if (from < 0)
+            from = 0;
+        if (playbackIndex.Count == 0 && from > 0)
+        {
+            RebuildPlaybackIndex();
+            return;
+        }
+        for (int i = from; i < playbackOrder.Count; i++)
+            RememberPlaybackIndex(playbackOrder[i], i);
+    }
+
+    // Drops one playlist path and shifts later indexes down.
+    // path is the file removed at removed. Returns nothing.
+    private void NotePlaybackRemoved(string path, int removed)
+    {
+        if (playbackIndex.Count == 0)
+        {
+            RebuildPlaybackIndex();
+            return;
+        }
+
+        int mapped;
+        if (!string.IsNullOrEmpty(path) &&
+            playbackIndex.TryGetValue(path, out mapped) &&
+            mapped == removed)
+            playbackIndex.Remove(path);
+
+        if (playbackIndex.Count == 0)
+            return;
+
+        var later = new List<string>();
+        foreach (var pair in playbackIndex)
+        {
+            if (pair.Value > removed)
+                later.Add(pair.Key);
+        }
+        for (int i = 0; i < later.Count; i++)
+            playbackIndex[later[i]] = playbackIndex[later[i]] - 1;
+    }
+
+    // Stores the first index for path.
+    // Returns nothing.
+    private void RememberPlaybackIndex(string path, int index)
+    {
+        if (string.IsNullOrEmpty(path))
+            return;
+        if (!playbackIndex.ContainsKey(path))
+            playbackIndex.Add(path, index);
     }
 
     // True for a local drive path that can be shown before the scan.

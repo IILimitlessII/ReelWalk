@@ -22,6 +22,8 @@ internal sealed partial class ImageLibrary : IDisposable
 {
     private List<string> allImagePaths;
     private List<string> playbackOrder;
+    private readonly Dictionary<string, int> playbackIndex =
+        new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
     private HashSet<string> knownPaths;
     private int currentIndex;
     private readonly WatchHistory history = new WatchHistory();
@@ -218,6 +220,7 @@ internal sealed partial class ImageLibrary : IDisposable
 
         if (currentMode == "Random" && playbackOrder.Count > 1)
             ShuffleInPlace(playbackOrder);
+        RebuildPlaybackIndex();
 
         LibraryUpdate result = LibraryUpdate.Updated;
         if (!string.IsNullOrEmpty(keep))
@@ -302,25 +305,32 @@ internal sealed partial class ImageLibrary : IDisposable
                 }
                 if (live.Count > 0 && playbackOrder != null)
                 {
+                    int from = playbackOrder.Count;
                     playbackOrder.AddRange(live);
+                    NotePlaybackAdded(from);
                     folderRemaining += live.Count;
                 }
             }
             else if (string.Equals(currentMode, "Random", StringComparison.OrdinalIgnoreCase))
             {
+                int from = playbackOrder.Count;
                 playbackOrder.AddRange(playable);
+                NotePlaybackAdded(from);
             }
             else if (complete)
             {
                 var keep = GetCurrentImagePath();
                 playbackOrder = BuildPlaybackOrder(allImagePaths, currentMode);
+                RebuildPlaybackIndex();
                 history.Clear();
                 int idx = FindPath(playbackOrder, keep);
                 currentIndex = idx >= 0 ? idx : Math.Max(0, Math.Min(currentIndex, playbackOrder.Count - 1));
             }
             else
             {
+                int from = playbackOrder.Count;
                 playbackOrder.AddRange(playable);
+                NotePlaybackAdded(from);
             }
         }
 
@@ -335,6 +345,7 @@ internal sealed partial class ImageLibrary : IDisposable
             {
                 var keep = GetCurrentImagePath();
                 playbackOrder = BuildPlaybackOrder(allImagePaths, currentMode);
+                RebuildPlaybackIndex();
                 history.Clear();
                 int idx = FindPath(playbackOrder, keep);
                 currentIndex = idx >= 0 ? idx : Math.Max(0, Math.Min(currentIndex, playbackOrder.Count - 1));
@@ -402,6 +413,7 @@ internal sealed partial class ImageLibrary : IDisposable
             {
                 OrderFolderFiles(folderFiles, folderPlayMode);
                 playbackOrder = folderFiles;
+                RebuildPlaybackIndex();
                 PlaceOn(keep);
                 folderRemaining = Math.Max(0, playbackOrder.Count - 1);
             }
@@ -409,6 +421,7 @@ internal sealed partial class ImageLibrary : IDisposable
         else
         {
             playbackOrder = BuildPlaybackOrder(allImagePaths, currentMode);
+            RebuildPlaybackIndex();
             PlaceOn(keep);
         }
 

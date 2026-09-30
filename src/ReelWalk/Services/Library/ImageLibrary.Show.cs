@@ -111,6 +111,7 @@ internal sealed partial class ImageLibrary
         if (knownPaths != null)
             knownPaths.Remove(path);
         playbackOrder.RemoveAt(currentIndex);
+        NotePlaybackRemoved(path, currentIndex);
         history.Shift(currentIndex);
 
         DropCache();
@@ -148,6 +149,7 @@ internal sealed partial class ImageLibrary
         var currentPath = GetCurrentImagePath();
         currentMode = mode;
         playbackOrder = BuildPlaybackOrder(allImagePaths, currentMode);
+        RebuildPlaybackIndex();
 
         if (currentPath != null)
         {
@@ -180,19 +182,22 @@ internal sealed partial class ImageLibrary
 
         if (randomPicks)
         {
-            QueueDecode(PathAt(baseIndex));
+            QueueDecode(PathAt(baseIndex), baseIndex);
             if (planned >= 0 && planned != baseIndex)
-                QueueDecode(PathAt(planned));
+                QueueDecode(PathAt(planned), planned);
             if (backIndex >= 0 && backIndex < count && backIndex != baseIndex && backIndex != planned)
-                QueueDecode(PathAt(backIndex));
+                QueueDecode(PathAt(backIndex), backIndex);
             if (forwardIndex >= 0 && forwardIndex < count &&
                 forwardIndex != baseIndex && forwardIndex != planned && forwardIndex != backIndex)
-                QueueDecode(PathAt(forwardIndex));
+                QueueDecode(PathAt(forwardIndex), forwardIndex);
             return;
         }
 
         for (int i = 0; i <= PRELOAD_COUNT; i++)
-            QueueDecode(PathAt((baseIndex + i) % count));
+        {
+            int index = (baseIndex + i) % count;
+            QueueDecode(PathAt(index), index);
+        }
     }
 
     // Path at index, or null when the playlist does not have it.
@@ -205,15 +210,14 @@ internal sealed partial class ImageLibrary
     }
 
     // Starts a background decode when path is not cached or already running.
-    // path is a still. Returns nothing.
-    private void QueueDecode(string path)
+    // index is path's place in the playlist. Returns nothing.
+    private void QueueDecode(string path, int index)
     {
         if (libraryReleased || string.IsNullOrEmpty(path) || MediaTypes.IsVideo(path))
             return;
         if (failedStills.Contains(path))
             return;
-        int existing = FindPath(playbackOrder, path);
-        if (existing >= 0 && imageCache.ContainsKey(existing))
+        if (index >= 0 && imageCache.ContainsKey(index))
             return;
         if (!decodeInflight.TryAdd(path, 0))
             return;
@@ -292,7 +296,7 @@ internal sealed partial class ImageLibrary
         if (failedStills.Contains(path))
             return StillFetch.Missing;
 
-        QueueDecode(path);
+        QueueDecode(path, currentIndex);
         return StillFetch.Waiting;
     }
 

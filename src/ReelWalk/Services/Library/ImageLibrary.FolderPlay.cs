@@ -55,6 +55,7 @@ internal sealed partial class ImageLibrary : IDisposable
         folderPlayPath = folderPath;
         currentMode = "Folder";
         playbackOrder = folderFiles;
+        RebuildPlaybackIndex();
         currentIndex = start;
         folderRemaining = playbackOrder.Count - 1;
 
@@ -74,6 +75,7 @@ internal sealed partial class ImageLibrary : IDisposable
         folderPlayMode = mode;
         var current = GetCurrentImagePath();
         OrderFolderFiles(playbackOrder, mode);
+        RebuildPlaybackIndex();
 
         int start = FindPath(playbackOrder, current);
         if (start < 0) start = 0;
@@ -232,6 +234,7 @@ internal sealed partial class ImageLibrary : IDisposable
         OrderFolderFiles(folderFiles, folderPlayMode);
 
         playbackOrder = folderFiles;
+        RebuildPlaybackIndex();
         PlaceOn(GetCurrentImagePath());
         folderRemaining = Math.Max(0, playbackOrder.Count - 1);
         history.Clear();
@@ -264,6 +267,7 @@ internal sealed partial class ImageLibrary : IDisposable
             playbackOrder = savedPlaybackOrder;
         else
             playbackOrder = BuildPlaybackOrder(allImagePaths, currentMode);
+        RebuildPlaybackIndex();
 
         int idx = -1;
         if (!string.IsNullOrEmpty(keepPath) && playbackOrder != null)
