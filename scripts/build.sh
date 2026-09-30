@@ -1,18 +1,18 @@
 #!/usr/bin/env sh
 # Publishes standalone ReelWalk binaries into ./build, then removes bin/ and obj/.
 # Usage:
-#   ./build.sh           both win-x64 and linux-x64
-#   ./build.sh --windows only Windows
-#   ./build.sh --linux   only Linux
-#   ./build.sh -w | -l   short forms
-#   ./build.sh --help
+#   ./scripts/build.sh           both win-x64 and linux-x64
+#   ./scripts/build.sh --windows only Windows
+#   ./scripts/build.sh --linux   only Linux
+#   ./scripts/build.sh -w | -l   short forms
+#   ./scripts/build.sh --help
 #
 # Note: Windows cannot keep both "ReelWalk" and "ReelWalk.exe" in the same folder,
 # so each target goes under its own subdirectory.
 
 set -eu
 
-ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 PROJECT="$ROOT/src/ReelWalk/ReelWalk.csproj"
 OUT="$ROOT/build"
 DO_WIN=0
@@ -22,7 +22,7 @@ PUBLISH_FLAGS="-c Release --self-contained true -p:PublishSingleFile=true -p:Inc
 
 usage() {
     cat <<'EOF'
-Usage: ./build.sh [options]
+Usage: ./scripts/build.sh [options]
 
   (default)     Build Windows and Linux standalone binaries
   -w, --windows Build only win-x64

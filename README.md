@@ -1,39 +1,126 @@
-# ReelWalk
+<p align="center">
+  <img src="docs/logo.jpg" width="120" alt="ReelWalk icon">
+</p>
 
-A lightweight fullscreen slideshow for Windows and Linux. It plays a mix of photos and videos from the folders you choose.
+<h1 align="center">ReelWalk</h1>
 
-Point it at a library, including a large one on a network share, and it starts showing files while the rest of the scan continues in the background. The next launch can show the last file immediately, then refresh the library.
+<p align="center">
+  A fullscreen slideshow for the folders you already have.<br>
+  Photos and videos, on Windows and Linux, in one file.
+</p>
 
-## Features
+<p align="center">
+  <img src="https://img.shields.io/badge/Windows%20%26%20Linux-x64-2F7CF0" alt="Windows and Linux">
+  <img src="https://img.shields.io/badge/.NET-10-5B94F5" alt=".NET 10">
+  <img src="https://img.shields.io/badge/license-MIT-152238" alt="MIT license">
+</p>
 
-- **Photos and videos in one playlist** — images and videos are scanned together
-- **Wide format support** — JPEG, PNG, GIF, BMP, TIFF, and WebP. HEIC, HEIF, AVIF, and HD Photo are scanned and skipped when they cannot be decoded. Videos: MP4, M4V, WMV, AVI, MOV, MKV, and WebM
-- **Fullscreen** — the window fills the screen. Escape quits.
-- **Transitions** — Crossfade, MorphZoom, SoftWipe, ParallaxReveal, and ScaleDissolve, one chosen at random from the ones you leave enabled
-- **Ken Burns** — slow pan and zoom on still images
-- **Playback order** — Random, Newest-first, Oldest-first, or Sequential (by file path)
-- **Folder play** — F opens a folder explorer on the folders around the current file. Click or Enter plays one. Right looks inside. Type to jump to a name. Random by default, then the previous playlist resumes
-- **Large and slow libraries** — recursive scan, folders you can ignore, UNC paths, a saved file list (`ReelWalk.library`), and the last file restored on the next start
-- **Video controls** — volume, a progress bar you can drag, and jumps of 5 or 30 seconds
-- **No extra install on Windows** — `ReelWalk.exe` includes the .NET runtime and LibVLC
+<p align="center">
+  <img src="docs/banner.jpg" width="720" alt="A row of pictures, the one in the middle lit">
+</p>
 
-## Requirements
+Point ReelWalk at a folder, including a large one on a network share. It starts showing files while the rest of the scan continues. The next launch can open on the last file, then check for anything new.
 
-- Windows 10 or 11, or Linux x64
-- Each publish is one file and includes the .NET 10 runtime. On Linux, install LibVLC from the distro (`libvlc`) so videos can play.
+Only one copy runs at a time.
 
-Only one copy of ReelWalk runs at a time.
+## Start
 
-## Installation
-
-1. Copy `ReelWalk.exe` on Windows, or `ReelWalk` on Linux, to any location.
-2. Run it. The first launch writes `ReelWalk.toml` next to the program and then exits.
-3. Edit `ReelWalk.toml` and add your folder paths.
+1. Copy `ReelWalk.exe` (Windows) or `ReelWalk` (Linux) anywhere you like.
+2. Run it once. It writes `ReelWalk.toml` beside itself, then exits.
+3. Add your folders to that file.
 4. Run it again.
 
 `ReelWalk.toml` and `ReelWalk.library` stay in that same folder.
 
-## Configuration (`ReelWalk.toml`)
+On Linux, install LibVLC from your distro (`libvlc`) so videos can play. The Windows file brings its own.
+
+## What you get
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**One playlist**
+Photos and videos play together. You can limit it to either.
+
+**Playback order**
+Random, newest, oldest, or name order. Random remembers the files you just saw.
+
+**Folder play**
+Press <kbd>F</kbd> or right-click. Play one folder, then return to the library.
+
+</td>
+<td width="50%" valign="top">
+
+**Motion**
+Crossfade, zoom, wipe, and Ken Burns. Turn any of them off.
+
+**Large libraries**
+Recursive scan, folders you can ignore, and a saved file list so the next open is quick.
+
+**Look**
+Five themes, a contain or cover fit, and a tray menu for pause, next, and folders.
+
+</td>
+</tr>
+</table>
+
+Formats: JPEG, PNG, GIF, BMP, TIFF, WebP. HEIC, HEIF, AVIF, and HD Photo are picked up and skipped if they cannot be decoded. Videos: MP4, M4V, WMV, AVI, MOV, MKV, WebM.
+
+A photo that will not open is skipped. New files show up on their own.
+
+## Keys
+
+Click the window so it has focus. Press <kbd>H</kbd> or <kbd>F1</kbd> for this list on screen. <kbd>Esc</kbd> closes the panel you are in, then quits.
+
+These are the defaults. Change any of them under `[controls]` in `ReelWalk.toml`, or in Settings with <kbd>P</kbd>.
+
+| Key | What it does |
+|---|---|
+| <kbd>→</kbd> <kbd>←</kbd> or the wheel | Next or previous file |
+| <kbd>Space</kbd> or middle-click | Pause |
+| <kbd>R</kbd> <kbd>N</kbd> <kbd>S</kbd> | Random, newest by date taken, or name order |
+| <kbd>V</kbd> | Photos, videos, or both |
+| <kbd>F</kbd> or right-click | Folders around the current file |
+| <kbd>P</kbd> | Settings |
+| <kbd>K</kbd> | Ken Burns |
+| <kbd>W</kbd> | Whole picture, or fill the screen |
+| <kbd>Esc</kbd> | Close, then quit |
+
+In Random, <kbd>←</kbd> walks back through the last files you saw (10, unless you change it). <kbd>→</kbd> returns along that trail before it picks a new one.
+
+Videos play to the end and ignore the photo timer. Drag the bar at the bottom, or use <kbd>Ctrl</kbd> with the arrow keys, to move through a video. A burst of short jumps lands once, on the time you stop at.
+
+<details>
+<summary>Every default key</summary>
+
+| Key | What it does |
+|---|---|
+| <kbd>Ctrl</kbd> + wheel, <kbd>Ctrl</kbd>+<kbd>↑</kbd> <kbd>Ctrl</kbd>+<kbd>↓</kbd>, <kbd>M</kbd> | Volume, or mute |
+| <kbd>Ctrl</kbd>+<kbd>→</kbd> <kbd>Ctrl</kbd>+<kbd>←</kbd> | Jump 5 seconds |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>→</kbd> <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>←</kbd> | Jump 30 seconds |
+| <kbd>Home</kbd> <kbd>End</kbd> | First or last file |
+| <kbd>Page Up</kbd> <kbd>Page Down</kbd> | Skip 10 files |
+| <kbd>↑</kbd> <kbd>↓</kbd> | Photo time, one second at a time |
+| <kbd>Enter</kbd> | Play the folder you are on |
+| <kbd>→</kbd> in the folder list | Open a folder |
+| <kbd>←</kbd> or <kbd>Backspace</kbd> | Leave a folder |
+| Type | Jump to a folder name |
+| <kbd>C</kbd> | Copy the file path |
+| <kbd>I</kbd> | File info |
+| <kbd>O</kbd> | Show the file in the file browser |
+| <kbd>Delete</kbd> | Delete, after asking |
+| <kbd>Ctrl</kbd>+<kbd>Delete</kbd> | Delete now |
+
+In the folder list, **Subfolders** plays nested folders too. **This folder** plays only the files in the one you chose. When that folder finishes, the previous playlist comes back.
+
+The path in the top-left corner opens the same folder menu. Right-click the tray icon for pause, next, previous, folders, edit config, and exit.
+
+</details>
+
+## Config
+
+A short `ReelWalk.toml` is enough to begin:
 
 ```toml
 paths = [
@@ -46,18 +133,45 @@ ignore = [
 ]
 
 [display]
-duration = 8.0                 # seconds each photo stays on screen
-transition_percent = 20.0
-fit = "Contain"                # Contain = whole picture, Cover = fill and crop
-video_volume = 1.00            # 0.00 mute, 1.00 full
+duration = 8.0
+theme = "HarborBlue"
 
 [playback]
-mode = "Random"                # Random | NewestFirst | OldestFirst | Sequential
-show = "Both"                  # Both | Images | Videos
-folder_mode = "Random"         # Random | Sequential — starting choice in the folder menu
-folder_subfolders = true       # true also plays folders inside the chosen folder
-history = 10                   # files Back remembers in Random; Forward returns along them
-last_index = 0                 # written on exit
+mode = "Random"
+show = "Both"
+```
+
+`duration` is seconds per photo. `ignore` skips that folder and everything inside it. Network paths work. ReelWalk rewrites the file when it exits, so keyboard changes are kept.
+
+Themes: Harbor Blue, Dark Slate, Jungle Green, Midnight Starry Sky, Pastel Dreams. Pick one in Settings, or set `theme`.
+
+<details>
+<summary>Full example</summary>
+
+```toml
+paths = [
+    "C:\\Users\\Public\\Pictures",
+    "\\\\server\\photos",
+]
+
+ignore = [
+    "G:\\other\\Indexes",
+]
+
+[display]
+duration = 8.0
+transition_percent = 20.0
+fit = "Contain"          # Contain = whole picture, Cover = fill the screen
+theme = "HarborBlue"     # HarborBlue | DarkSlate | JungleGreen | MidnightSky | PastelDreams
+video_volume = 1.00      # 0.00 mute, 1.00 full
+
+[playback]
+mode = "Random"          # Random | NewestFirst | OldestFirst | Sequential
+show = "Both"            # Both | Images | Videos
+folder_mode = "Random"   # Random | Sequential
+folder_subfolders = true
+history = 10
+last_index = 0
 last_path = ""
 
 [transitions]
@@ -69,157 +183,47 @@ enabled = [
     "ScaleDissolve",
 ]
 ken_burns = true
-# ken_burns_duration = 10.0
-# ken_burns_max_zoom = 1.3
 
 [controls]
-# Key names match Avalonia: Left, Right, PageUp, Space, Delete, F1.
-# Prefix with Ctrl+, Shift+, or Alt+.
 skip = 10
 seek_seconds = 5
 seek_fast_seconds = 30
 next = "Right"
 previous = "Left"
 pause = "Space"
-first = "Home"
-last = "End"
-skip_forward = "PageUp"
-skip_back = "PageDown"
-duration_up = "Up"
-duration_down = "Down"
-volume_up = "Ctrl+Up"
-volume_down = "Ctrl+Down"
-mute = "M"
-seek_forward = "Ctrl+Right"
-seek_back = "Ctrl+Left"
-seek_forward_fast = "Ctrl+Shift+Right"
-seek_back_fast = "Ctrl+Shift+Left"
-random = "R"
-newest = "N"
-sequential = "S"
-show = "V"
+settings = "P"
 folder = "F"
-ken_burns = "K"
-fit = "W"
-copy = "C"
-info = "I"
-help = "H"
-help_alt = "F1"
-open = "O"
-delete = "Delete"
-delete_now = "Ctrl+Delete"
 close = "Escape"
-explorer_up = "Up"
-explorer_down = "Down"
-explorer_home = "Home"
-explorer_end = "End"
-explorer_back = "Left"
-explorer_open = "Right"
-explorer_play = "Enter"
-explorer_backspace = "Back"
 ```
 
-Duration, video volume, fit, Ken Burns, playback mode, and folder-play settings are also updated when you change them from the keyboard. ReelWalk rewrites `ReelWalk.toml` when it exits.
+Key names match the app: `Left`, `Right`, `PageUp`, `Space`, `Delete`, `F1`. Add `Ctrl+`, `Shift+`, or `Alt+` in front.
 
-## Controls
+</details>
 
-Click the slideshow so it has keyboard focus. Press **H** or **F1** for the same list on screen. **Escape** closes that panel, then the location menu, then the app. The keys below are the defaults. Each one is a setting under `[controls]` in `ReelWalk.toml`, so you can change it.
+## Build
 
-In Random, **Left** walks back through the last `history` files (10 unless you change it), and **Right** returns forward along that same trail before it picks a new file. Ordered playback still moves through the list.
+From the repository root, with the .NET 10 SDK (Git Bash, WSL, or Linux):
 
-### Navigation
+```sh
+./scripts/build.sh
+```
 
-| Key | Action |
+That writes two self-contained files:
+
+| File | System |
 |---|---|
-| Right / Left, or mouse wheel | Next / previous file |
-| Ctrl+wheel | Video volume up / down |
-| Ctrl+Right / Ctrl+Left | Jump 5 seconds in the current video |
-| Ctrl+Shift+Right / Ctrl+Shift+Left | Jump 30 seconds |
-| Home / End | First / last file |
-| Page Up / Page Down | Skip 10 files forward / back |
+| `build/win-x64/ReelWalk.exe` | Windows x64 |
+| `build/linux-x64/ReelWalk` | Linux x64 |
 
-A burst of short video jumps lands once, on the time you stop at. Drag the bar along the bottom of a video and it plays from where you release.
+One target only:
 
-### Playback
-
-| Key | Action |
-|---|---|
-| Space, or middle-click | Pause / resume |
-| Up / Down | Image display time +1s / −1s |
-| Ctrl+Up / Ctrl+Down, or M | Video volume up / down, or mute (saved to `ReelWalk.toml`) |
-
-### Modes
-
-| Key | Action |
-|---|---|
-| R | Random |
-| N | Newest first, using the date the photo was taken when the file has one |
-| S | Sequential (sorted by path) |
-| V | Photos and videos, photos only, or videos only. Saved as `show` in the toml. |
-| F, or right-click | Folder explorer. It opens on the folders around the current file, with that folder marked Now. Click a folder or press Enter to play it. Right, or Open, looks inside a folder that has folders of its own. Type to jump to a name. Left goes back. Random is the starting choice. Subfolders plays nested folders too; This folder plays only the files in the chosen folder. Playback returns to the previous list when that folder finishes. The key is `folder` in the toml. |
-| K | Ken Burns on / off |
-
-### Display and files
-
-| Key | Action |
-|---|---|
-| W | Whole picture, or fill the screen |
-| C | Copy the current file path |
-| I | File info overlay |
-| H or F1 | Keyboard help |
-| O | Show the current file in the file browser |
-| Delete | Delete the current file after confirmation |
-| Ctrl+Delete | Delete the current file without asking |
-| Escape | Exit |
-
-The path in the top-left corner opens the same folder menu. A photo that cannot be opened is skipped. New files in the configured folders are picked up on their own. Random playback avoids the files it just showed. Right-click the tray icon for pause, next, previous, folders, edit config, and exit.
-
-## Video
-
-Videos play to the end and ignore `duration`. Volume comes from `video_volume`. A thin progress bar and elapsed / remaining time appear while a video is playing. Left and Right always change files; seeking uses Ctrl, or a click and drag on the bar.
-
-## Building
-
-From the repository root, with the .NET 10 SDK installed (Git Bash, WSL, or Linux):
-
-```
-./build.sh
+```sh
+./scripts/build.sh --windows
+./scripts/build.sh --linux
 ```
 
-That publishes both self-contained binaries into `build/` (separate folders so Windows does not treat `ReelWalk` and `ReelWalk.exe` as the same file):
-
-- `build/win-x64/ReelWalk.exe` — Windows x64
-- `build/linux-x64/ReelWalk` — Linux x64
-
-Build only one target:
-
-```
-./build.sh --windows
-./build.sh --linux
-```
-
-`bin/` and `obj/` under `src/ReelWalk/` are removed after a successful publish. Copy the file for the system you are on. `ReelWalk.toml` and `ReelWalk.library` stay beside it. The Windows file unpacks LibVLC on first launch. The Linux file uses the LibVLC installed on that machine.
+`bin/` and `obj/` under `src/ReelWalk/` are removed after a successful publish. Copy the file for the system you are on. Your `ReelWalk.toml` and `ReelWalk.library` stay beside it.
 
 ## License
 
-MIT License
-
-Copyright (c) 2026
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+[MIT](LICENSE). Copyright (c) 2026.
