@@ -66,6 +66,8 @@ internal struct ControlChord
             return "PageDown";
         if (key == Key.Back)
             return "Back";
+        if (key == Key.Enter || key == Key.Return)
+            return "Enter";
         return key.ToString();
     }
 

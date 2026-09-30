@@ -218,10 +218,7 @@ internal sealed partial class ImageLibrary : IDisposable
 
         string keep = showing ? GetCurrentImagePath() : null;
         SetLibraryFiles(new List<string>(orderedFiles));
-        playbackOrder = OnlyAllowed(orderedFiles);
-
-        if (currentMode == "Random" && playbackOrder.Count > 1)
-            ShuffleInPlace(playbackOrder);
+        playbackOrder = BuildPlaybackOrder(orderedFiles, currentMode);
         RebuildPlaybackIndex();
 
         LibraryUpdate result = LibraryUpdate.Updated;
@@ -250,8 +247,10 @@ internal sealed partial class ImageLibrary : IDisposable
             int resume = FindPath(playbackOrder, resumePath);
             if (resume >= 0)
                 currentIndex = resume;
-            else
+            else if (IsRandom(currentMode))
                 currentIndex = PickRandomIndex(-1);
+            else
+                currentIndex = 0;
         }
 
         showing = playbackOrder.Count > 0;

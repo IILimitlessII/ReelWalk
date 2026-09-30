@@ -146,9 +146,9 @@ internal static partial class ConfigService
 
         lines.Add("[display]");
         lines.Add("# Seconds each photo stays on screen. Videos play through.");
-        lines.Add(string.Format(CI, "duration = {0:F1}", config.DisplayDuration));
+        lines.Add(string.Format(CI, "duration = {0:F1}", ClampDuration(config.DisplayDuration)));
         lines.Add("# Transition length as a percent of duration.");
-        lines.Add(string.Format(CI, "transition_percent = {0:F1}", config.TransitionDurationPercent));
+        lines.Add(string.Format(CI, "transition_percent = {0:F1}", ClampPercent(config.TransitionDurationPercent)));
         lines.Add("# Contain = whole picture visible. Cover = fill the screen.");
         lines.Add("fit = " + Quote(string.IsNullOrEmpty(config.ImageFit) ? "Contain" : config.ImageFit));
         lines.Add("# HarborBlue | DarkSlate | JungleGreen | MidnightSky | PastelDreams");
@@ -235,8 +235,8 @@ internal static partial class ConfigService
         if (doc.Arrays.TryGetValue("ignore", out ignore))
             config.IgnorePaths = CleanPaths(ignore);
 
-        config.DisplayDuration = doc.Number("display.duration", config.DisplayDuration);
-        config.TransitionDurationPercent = doc.Number("display.transition_percent", config.TransitionDurationPercent);
+        config.DisplayDuration = ClampDuration(doc.Number("display.duration", config.DisplayDuration));
+        config.TransitionDurationPercent = ClampPercent(doc.Number("display.transition_percent", config.TransitionDurationPercent));
         config.ImageFit = doc.Text("display.fit", config.ImageFit);
         config.Theme = ThemeCatalog.Normalize(doc.Text("display.theme", config.Theme));
         config.VideoVolume = ClampVolume(doc.Number("display.video_volume", config.VideoVolume));
@@ -377,6 +377,32 @@ internal static partial class ConfigService
         if (value > max)
             return max;
         return (int)value;
+    }
+
+    // Photo time on screen, kept between 1 and 60 seconds.
+    // A missing or invalid number returns 8. Returns the seconds.
+    private static double ClampDuration(double value)
+    {
+        if (double.IsNaN(value))
+            return 8;
+        if (value < 1)
+            return 1;
+        if (value > 60)
+            return 60;
+        return value;
+    }
+
+    // Transition length as a percent of the photo time, kept between 0 and 100.
+    // A missing or invalid number returns 20. Returns the percent.
+    private static double ClampPercent(double value)
+    {
+        if (double.IsNaN(value))
+            return 20;
+        if (value < 0)
+            return 0;
+        if (value > 100)
+            return 100;
+        return value;
     }
 
     // A positive number of seconds, or fallback when it is missing or absurd.
