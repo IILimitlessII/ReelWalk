@@ -4,6 +4,57 @@ using System.IO;
 using System.Threading;
 
 namespace ReelWalk.Services;
+internal sealed class PathFilter
+{
+    private readonly string[] _roots;
+
+    // Stores normalized ignore folders.
+    // roots are full paths without a trailing slash. Returns nothing.
+    private PathFilter(string[] roots)
+    {
+        _roots = roots;
+    }
+
+    internal bool IsEmpty { get { return _roots == null || _roots.Length == 0; } }
+
+    // Builds a filter from the configured ignore list.
+    // ignorePaths may be null. Returns an empty filter when there are none.
+    internal static PathFilter From(IList<string> ignorePaths)
+    {
+        if (ignorePaths == null || ignorePaths.Count == 0)
+            return new PathFilter(new string[0]);
+
+        var list = new List<string>(ignorePaths.Count);
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < ignorePaths.Count; i++)
+        {
+            var n = Paths.Normalize(ignorePaths[i]);
+            if (n != null && seen.Add(n))
+                list.Add(n);
+        }
+        return new PathFilter(list.ToArray());
+    }
+
+    // True when path equals an ignore folder or is inside one.
+    // path is a file or folder. Returns false for an empty filter.
+    internal bool Blocks(string path)
+    {
+        if (IsEmpty || string.IsNullOrEmpty(path))
+            return false;
+
+        var n = Paths.Normalize(path);
+        if (n == null)
+            return false;
+
+        for (int i = 0; i < _roots.Length; i++)
+        {
+            if (Paths.IsInside(n, _roots[i], true))
+                return true;
+        }
+        return false;
+    }
+}
+
 internal static class LibraryScanner
 {
     private static int scanActive;
@@ -182,56 +233,5 @@ internal static class LibraryScanner
     internal static bool IsIgnored(string path, IList<string> ignorePaths)
     {
         return PathFilter.From(ignorePaths).Blocks(path);
-    }
-}
-
-internal sealed class PathFilter
-{
-    private readonly string[] _roots;
-
-    // Stores normalized ignore folders.
-    // roots are full paths without a trailing slash. Returns nothing.
-    private PathFilter(string[] roots)
-    {
-        _roots = roots;
-    }
-
-    internal bool IsEmpty { get { return _roots == null || _roots.Length == 0; } }
-
-    // Builds a filter from the configured ignore list.
-    // ignorePaths may be null. Returns an empty filter when there are none.
-    internal static PathFilter From(IList<string> ignorePaths)
-    {
-        if (ignorePaths == null || ignorePaths.Count == 0)
-            return new PathFilter(new string[0]);
-
-        var list = new List<string>(ignorePaths.Count);
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        for (int i = 0; i < ignorePaths.Count; i++)
-        {
-            var n = Paths.Normalize(ignorePaths[i]);
-            if (n != null && seen.Add(n))
-                list.Add(n);
-        }
-        return new PathFilter(list.ToArray());
-    }
-
-    // True when path equals an ignore folder or is inside one.
-    // path is a file or folder. Returns false for an empty filter.
-    internal bool Blocks(string path)
-    {
-        if (IsEmpty || string.IsNullOrEmpty(path))
-            return false;
-
-        var n = Paths.Normalize(path);
-        if (n == null)
-            return false;
-
-        for (int i = 0; i < _roots.Length; i++)
-        {
-            if (Paths.IsInside(n, _roots[i], true))
-                return true;
-        }
-        return false;
     }
 }

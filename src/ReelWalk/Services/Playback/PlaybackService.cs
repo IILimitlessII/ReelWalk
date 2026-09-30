@@ -51,6 +51,14 @@ internal sealed partial class PlaybackService : IDisposable
     private string armedVideoPath;
     private bool videoEventsHooked;
 
+    private struct LibraryPublish
+    {
+        internal List<string> Files;
+        internal bool Authoritative;
+        internal int Stage;
+        internal Action Ready;
+    }
+
     internal event Action<int> FilesAdded;
 
     internal bool IsPaused { get { return isPaused; } }
@@ -230,14 +238,6 @@ internal sealed partial class PlaybackService : IDisposable
 
         if (item.Authoritative && item.Stage >= ImageLibrary.LibraryStageScan)
             EnsureAutoRefresh();
-    }
-
-    private struct LibraryPublish
-    {
-        internal List<string> Files;
-        internal bool Authoritative;
-        internal int Stage;
-        internal Action Ready;
     }
 
     // Shows the first file and starts the photo timer.

@@ -3,6 +3,24 @@ using Avalonia;
 using Avalonia.Media;
 
 namespace ReelWalk.Services;
+internal sealed class Palette
+{
+    internal readonly string Id;
+    internal readonly Color Ink;
+    internal readonly Color Surface;
+    internal readonly Color Lift;
+    internal readonly Color Accent;
+
+    internal Palette(string id, string ink, string surface, string lift, string accent)
+    {
+        Id = id;
+        Ink = Color.Parse(ink);
+        Surface = Color.Parse(surface);
+        Lift = Color.Parse(lift);
+        Accent = Color.Parse(accent);
+    }
+}
+
 internal static class ThemeCatalog
 {
     internal const string HarborBlue = "HarborBlue";
@@ -170,23 +188,5 @@ internal static class ThemeCatalog
             return v <= 0.03928 ? v / 12.92 : Math.Pow((v + 0.055) / 1.055, 2.4);
         }
         return 0.2126 * channel(color.R) + 0.7152 * channel(color.G) + 0.0722 * channel(color.B);
-    }
-
-    private sealed class Palette
-    {
-        internal readonly string Id;
-        internal readonly Color Ink;
-        internal readonly Color Surface;
-        internal readonly Color Lift;
-        internal readonly Color Accent;
-
-        internal Palette(string id, string ink, string surface, string lift, string accent)
-        {
-            Id = id;
-            Ink = Color.Parse(ink);
-            Surface = Color.Parse(surface);
-            Lift = Color.Parse(lift);
-            Accent = Color.Parse(accent);
-        }
     }
 }
