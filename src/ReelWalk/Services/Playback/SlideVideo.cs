@@ -29,6 +29,8 @@ internal sealed class SlideVideo : IDisposable
         this.view = view;
         var options = new System.Collections.Generic.List<string>
         {
+            // Hides decoder and window messages. Playback failures still raise EncounteredError.
+            "--quiet",
             "--no-video-title-show",
             "--no-osd",
             "--file-caching=300",
