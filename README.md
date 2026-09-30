@@ -23,16 +23,33 @@ Point ReelWalk at a folder, including a large one on a network share. It starts 
 
 Only one copy runs at a time.
 
-## Start
+## Getting Started
 
-1. Copy `ReelWalk.exe` (Windows) or `ReelWalk` (Linux) anywhere you like.
-2. Run it once. It writes `ReelWalk.toml` beside itself, then exits.
-3. Add your folders to that file.
-4. Run it again.
+The first run writes `ReelWalk.toml` beside the program, then exits. Add your folders to that file and run it again. `ReelWalk.library` is saved in the same folder.
 
-`ReelWalk.toml` and `ReelWalk.library` stay in that same folder.
+### Windows
 
-On Linux, install LibVLC from your distro (`libvlc`) so videos can play. The Windows file brings its own.
+A published `ReelWalk.exe` already includes the .NET runtime and LibVLC. Nothing else to install.
+
+To build this repo, install the .NET 10 SDK, then build from the repository root:
+
+```powershell
+winget install --id Microsoft.DotNet.SDK.10 --exact --accept-package-agreements --accept-source-agreements
+dotnet build src/ReelWalk/ReelWalk.csproj -c Debug
+```
+
+### Linux
+
+Videos need LibVLC from your distro. Building needs the .NET 10 SDK.
+
+```bash
+sudo apt install libvlc5 vlc-plugin-base
+curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh
+bash /tmp/dotnet-install.sh --channel 10.0
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
+dotnet build src/ReelWalk/ReelWalk.csproj -c Debug
+```
 
 ## What you get
 
@@ -241,3 +258,5 @@ One target only:
 ## License
 
 [MIT](LICENSE). Copyright (c) 2026.
+
+ReelWalk started as a port of [rSlide](https://github.com/rayone/rSlide) and was rewritten for Avalonia. Playback order, the transition set, and Ken Burns motion come from that project.
