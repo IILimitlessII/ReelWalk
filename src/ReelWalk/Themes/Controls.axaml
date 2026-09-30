@@ -91,7 +91,7 @@
     </Style>
 
     <!-- Settings text fields: selection and caret follow the theme. -->
-    <Style Selector="TextBox.bluefield">
+    <Style Selector="TextBox.themefield">
         <Setter Property="Foreground" Value="{DynamicResource ThemeFieldTextBrush}"/>
         <Setter Property="CaretBrush" Value="{DynamicResource ThemeCaretBrush}"/>
         <Setter Property="SelectionBrush" Value="{DynamicResource ThemeAccentStrongBrush}"/>
@@ -99,22 +99,22 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
-    <Style Selector="TextBox.bluefield:focus">
+    <Style Selector="TextBox.themefield:focus">
         <Setter Property="Foreground" Value="{DynamicResource ThemeFieldTextBrush}"/>
         <Setter Property="CaretBrush" Value="{DynamicResource ThemeCaretBrush}"/>
         <Setter Property="SelectionBrush" Value="{DynamicResource ThemeAccentStrongBrush}"/>
     </Style>
-    <Style Selector="TextBox.bluefield /template/ Border#PART_BorderElement">
+    <Style Selector="TextBox.themefield /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
-    <Style Selector="TextBox.bluefield:focus /template/ Border#PART_BorderElement">
+    <Style Selector="TextBox.themefield:focus /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
-    <Style Selector="TextBox.bluefield:pointerover /template/ Border#PART_BorderElement">
+    <Style Selector="TextBox.themefield:pointerover /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>

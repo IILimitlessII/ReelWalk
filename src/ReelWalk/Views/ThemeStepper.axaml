@@ -1,10 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="ReelWalk.Views.BlueStepper"
+             x:Class="ReelWalk.Views.ThemeStepper"
              MinWidth="120">
     <UserControl.Styles>
         <!-- Full templates — no Fluent resources, so OS yellow cannot appear. -->
-        <Style Selector="TextBox.bluefield">
+        <Style Selector="TextBox.themefield">
             <Setter Property="Foreground" Value="{DynamicResource ThemeFieldTextBrush}"/>
             <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}"/>
             <Setter Property="CaretBrush" Value="{DynamicResource ThemeCaretBrush}"/>
@@ -69,7 +69,7 @@
             Padding="2">
         <Grid ColumnDefinitions="*,28">
             <TextBox x:Name="Field"
-                     Classes="bluefield"
+                     Classes="themefield"
                      VerticalAlignment="Stretch"
                      KeyDown="Field_KeyDown"
                      LostFocus="Field_LostFocus"/>

@@ -82,13 +82,13 @@
                               RowSpacing="12"
                               HorizontalAlignment="Center">
                             <TextBlock Text="Duration (s)" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Column="1"
+                            <local:ThemeStepper Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="1" Maximum="60" Increment="1"
                                                FormatString="0.0"
                                                Value="{Binding SettingsDuration}"/>
                             <TextBlock Grid.Row="1" Text="Transition %" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Row="1" Grid.Column="1"
+                            <local:ThemeStepper Grid.Row="1" Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="0" Maximum="100" Increment="1"
                                                FormatString="0.0"
@@ -105,7 +105,7 @@
                                         CommandParameter="Cover"/>
                             </StackPanel>
                             <TextBlock Grid.Row="3" Text="Volume" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Row="3" Grid.Column="1"
+                            <local:ThemeStepper Grid.Row="3" Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="0" Maximum="1" Increment="0.05"
                                                FormatString="0.00"
@@ -171,7 +171,7 @@
                                 Command="{Binding ToggleSettingsFolderSubfoldersCommand}"/>
                         <Grid ColumnDefinitions="168,200" ColumnSpacing="20" HorizontalAlignment="Center">
                             <TextBlock Text="History" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Column="1"
+                            <local:ThemeStepper Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="1" Maximum="500" Increment="1"
                                                FormatString="0"
@@ -213,13 +213,13 @@
                               RowSpacing="12"
                               HorizontalAlignment="Center">
                             <TextBlock Text="Ken Burns (s)" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Column="1"
+                            <local:ThemeStepper Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="0.5" Maximum="600" Increment="0.5"
                                                FormatString="0.0"
                                                Value="{Binding SettingsKenBurnsDuration}"/>
                             <TextBlock Grid.Row="1" Text="Ken Burns zoom" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Row="1" Grid.Column="1"
+                            <local:ThemeStepper Grid.Row="1" Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="1" Maximum="3" Increment="0.1"
                                                FormatString="0.0"
@@ -239,19 +239,19 @@
                               RowSpacing="12"
                               HorizontalAlignment="Center">
                             <TextBlock Text="Skip files" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Column="1"
+                            <local:ThemeStepper Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="1" Maximum="500" Increment="1"
                                                FormatString="0"
                                                Value="{Binding SettingsSkip}"/>
                             <TextBlock Grid.Row="1" Text="Seek (s)" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Row="1" Grid.Column="1"
+                            <local:ThemeStepper Grid.Row="1" Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="0.5" Maximum="600" Increment="1"
                                                FormatString="0"
                                                Value="{Binding SettingsSeekSeconds}"/>
                             <TextBlock Grid.Row="2" Text="Seek fast (s)" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <local:BlueStepper Grid.Row="2" Grid.Column="1"
+                            <local:ThemeStepper Grid.Row="2" Grid.Column="1"
                                                HorizontalAlignment="Stretch"
                                                Minimum="0.5" Maximum="600" Increment="1"
                                                FormatString="0"
