@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/Windows%20%26%20Linux-x64-2F7CF0" alt="Windows and Linux">
   <img src="https://img.shields.io/badge/.NET-10-5B94F5" alt=".NET 10">
   <img src="https://img.shields.io/badge/license-MIT-152238" alt="MIT license">
+  <a href="../../releases"><img src="https://img.shields.io/badge/Releases-download-152238" alt="Releases"></a>
 </p>
 
 <p align="center">
@@ -33,7 +34,7 @@ Download a build from [Releases](../../releases). The first run writes `ReelWalk
 
 ### Linux
 
-Videos need LibVLC from your distro. Mark the download as executable, then run it.
+Tested on Debian only. Videos need LibVLC. Mark the download as executable, then run it.
 
 ```bash
 sudo apt install libvlc5 vlc-plugin-base
@@ -253,8 +254,6 @@ That writes two files:
 |---|---|
 | `build/win-x64/ReelWalk.exe` | Windows x64 |
 | `build/linux-x64/ReelWalk` | Linux x64 |
-
-A push to `main` publishes those two files to [Releases](../../releases).
 
 One target only:
 
