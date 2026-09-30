@@ -86,12 +86,21 @@ jobs:
           fi
           short=$(git rev-parse --short=7 HEAD)
           tag="v1.0.0-${short}"
-          notes="Windows and Linux builds from ${short}. The Linux build needs LibVLC from the distro: sudo apt install libvlc5 vlc-plugin-base"
+          notes=$(cat <<EOF
+          Windows and Linux builds from ${short}.
+
+
+          **The Linux build needs LibVLC from the distro**:
+
+          \`sudo apt install libvlc5 vlc-plugin-base\`
+          EOF
+          )
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" \
               release/ReelWalk-windows-x64.exe \
               release/ReelWalk-linux-x64 \
               --clobber
+            gh release edit "$tag" --notes "$notes"
           else
             gh release create "$tag" \
               release/ReelWalk-windows-x64.exe \
