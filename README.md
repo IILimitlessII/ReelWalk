@@ -25,30 +25,19 @@ Only one copy runs at a time.
 
 ## Getting Started
 
-The first run writes `ReelWalk.toml` beside the program, then exits. Add your folders to that file and run it again. `ReelWalk.library` is saved in the same folder.
+Download a build from [Releases](../../releases). The first run writes `ReelWalk.toml` beside the program, then exits. Add your folders to that file and run it again. `ReelWalk.library` is saved in the same folder.
 
 ### Windows
 
-A published `ReelWalk.exe` already includes the .NET runtime and LibVLC. Nothing else to install.
-
-To build this repo, install the .NET 10 SDK, then build from the repository root:
-
-```powershell
-winget install --id Microsoft.DotNet.SDK.10 --exact --accept-package-agreements --accept-source-agreements
-dotnet build src/ReelWalk/ReelWalk.csproj -c Debug
-```
+`ReelWalk-windows-x64.exe` includes the .NET runtime and LibVLC.
 
 ### Linux
 
-Videos need LibVLC from your distro. Building needs the .NET 10 SDK.
+Videos need LibVLC from your distro. Mark the download as executable, then run it.
 
 ```bash
 sudo apt install libvlc5 vlc-plugin-base
-curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh
-bash /tmp/dotnet-install.sh --channel 10.0
-export DOTNET_ROOT="$HOME/.dotnet"
-export PATH="$DOTNET_ROOT:$PATH"
-dotnet build src/ReelWalk/ReelWalk.csproj -c Debug
+chmod +x ReelWalk-linux-x64
 ```
 
 ## What you get
@@ -108,7 +97,7 @@ These are the defaults. Change any of them under `[controls]` in `ReelWalk.toml`
 
 | Key | What it does |
 |---|---|
-| <kbd>←</kbd> <kbd>→</kbd>  or the wheel | Next or previous file |
+| <kbd>←</kbd> <kbd>→</kbd> or the wheel | Next or previous file |
 | <kbd>Space</kbd> or middle-click | Pause |
 | <kbd>R</kbd> <kbd>N</kbd> <kbd>S</kbd> | Random, newest by date taken, or name order |
 | <kbd>V</kbd> | Photos, videos, or both |
@@ -174,7 +163,7 @@ show = "Both"
 
 `duration` is seconds per photo. `ignore` skips that folder and everything inside it. Network paths work. ReelWalk rewrites the file when it exits, so keyboard changes are kept.
 
-Themes: Harbor Blue, Dark Slate, Jungle Green, Midnight Starry Sky, Pastel Dreams. Pick one in Settings, or set `theme`.
+Themes: Harbor Blue, Dark Slate, Jungle Green, Midnight Sky, Pastel Dreams. Pick one in Settings, or set `theme`.
 
 <details>
 <summary>Full example</summary>
@@ -233,18 +222,39 @@ Key names match the app: `Left`, `Right`, `PageUp`, `Space`, `Delete`, `F1`. Add
 
 ## Build
 
-From the repository root, with the .NET 10 SDK (Git Bash, WSL, or Linux):
+Install the .NET 10 SDK, then build from the repository root.
+
+Windows:
+
+```powershell
+winget install --id Microsoft.DotNet.SDK.10 --exact --accept-package-agreements --accept-source-agreements
+dotnet build src/ReelWalk/ReelWalk.csproj -c Debug
+```
+
+Linux:
+
+```bash
+curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh
+bash /tmp/dotnet-install.sh --channel 10.0
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
+dotnet build src/ReelWalk/ReelWalk.csproj -c Debug
+```
+
+Self-contained files for both systems, from Git Bash, WSL, or Linux:
 
 ```sh
 ./scripts/build.sh
 ```
 
-That writes two self-contained files:
+That writes two files:
 
 | File | System |
 |---|---|
 | `build/win-x64/ReelWalk.exe` | Windows x64 |
 | `build/linux-x64/ReelWalk` | Linux x64 |
+
+A push to `main` publishes those two files to [Releases](../../releases).
 
 One target only:
 
