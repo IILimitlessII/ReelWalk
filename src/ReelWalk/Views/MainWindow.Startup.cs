@@ -83,21 +83,25 @@ public partial class MainWindow
 
             _viewModel.ShowLoading("Starting…");
 
+            bool checkingForNew = false;
+            int scanCount = 0;
             int imageCount = await playback.InitAsync(
-                count =>
+                (count, hasSavedLibrary) =>
                 {
+                    checkingForNew = hasSavedLibrary;
+                    if (count > scanCount)
+                        scanCount = count;
+
                     if (!_started)
                     {
-                        _viewModel.ShowLoading(count > 0
-                            ? string.Format("Scanning… {0:N0}", count)
-                            : "Scanning…");
+                        _viewModel.ShowLoading(LoadingStatus(hasSavedLibrary, count));
                     }
-                    else if (count > 0)
+                    else
                     {
-                        _viewModel.ShowIndex(string.Format("Updating library… {0:N0}", count));
+                        _viewModel.ShowIndex(IndexStatus(hasSavedLibrary, count));
                     }
                 },
-                BeginPlayback);
+                () => BeginPlayback(checkingForNew, scanCount));
 
             _viewModel.HideLoading();
             _viewModel.HideIndex();
@@ -133,15 +137,16 @@ public partial class MainWindow
     }
 
     // Starts the timer after the first file is on screen.
+    // checkingForNew is true when a saved library is already on disk. scanCount is files walked so far.
     // Returns nothing.
-    private void BeginPlayback()
+    private void BeginPlayback(bool checkingForNew, int scanCount)
     {
         if (_started || _viewModel.Playback == null)
             return;
 
         _started = true;
         _viewModel.HideLoading();
-        _viewModel.ShowIndex("Checking for new files…");
+        _viewModel.ShowIndex(IndexStatus(checkingForNew, scanCount));
 
         SetupTrayIcon();
         _viewModel.Playback.Start();
@@ -156,6 +161,28 @@ public partial class MainWindow
 
         _viewModel.ShowHint();
         _hintTimer.Start();
+    }
+
+    // Startup overlay while nothing is on screen yet.
+    // hasSavedLibrary true means the saved list is loading. count is files walked on a first scan.
+    private static string LoadingStatus(bool hasSavedLibrary, int count)
+    {
+        if (hasSavedLibrary)
+            return "Loading library…";
+        if (count > 0)
+            return string.Format("First scan… {0:N0}", count);
+        return "First scan…";
+    }
+
+    // Top status while playback is already running.
+    // hasSavedLibrary true is a check for files that are not in the saved list.
+    private static string IndexStatus(bool hasSavedLibrary, int count)
+    {
+        if (hasSavedLibrary)
+            return "Checking for new files…";
+        if (count > 0)
+            return string.Format("First scan… {0:N0}", count);
+        return "First scan…";
     }
 
     // Adds the tray menu.

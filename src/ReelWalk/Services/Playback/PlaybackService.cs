@@ -125,8 +125,9 @@ internal sealed partial class PlaybackService : IDisposable
     }
 
     // Shows the last file first, then finishes the folder scan.
+    // progress receives the walked file count and whether a saved library already exists.
     // ready runs on the UI thread the first time there is something to play. Returns the file count.
-    internal Task<int> InitAsync(Action<int> progressCallback, Action ready)
+    internal Task<int> InitAsync(Action<int, bool> progressCallback, Action ready)
     {
         var dispatcher = Dispatcher.UIThread;
         libraryCachePath = Path.Combine(
@@ -139,14 +140,14 @@ internal sealed partial class PlaybackService : IDisposable
             config.IgnorePaths,
             cacheFile,
             config.LastImagePath,
-            count =>
+            (count, hasSavedLibrary) =>
             {
                 long now = Environment.TickCount64;
                 if (count > 0 && now - lastProgressUi < 1000)
                     return;
                 lastProgressUi = now;
                 if (progressCallback == null) return;
-                try { dispatcher.Post(() => progressCallback(count), DispatcherPriority.Background); }
+                try { dispatcher.Post(() => progressCallback(count, hasSavedLibrary), DispatcherPriority.Background); }
                 catch (InvalidOperationException) { }
             },
             (files, authoritative, stage) =>

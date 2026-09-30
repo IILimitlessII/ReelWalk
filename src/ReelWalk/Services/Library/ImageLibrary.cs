@@ -110,13 +110,14 @@ internal sealed partial class ImageLibrary : IDisposable
     }
 
     // Loads the saved library, then scans for anything new.
+    // progress receives the walked file count and whether a saved library already exists.
     // publish runs on this background thread. The stage must not replace a newer scan. Returns the file count.
     internal Task<int> InitAsync(
         List<string> imagePaths,
         IList<string> ignorePaths,
         string cacheFile,
         string resumePath,
-        Action<int> progressCallback,
+        Action<int, bool> progressCallback,
         Action<List<string>, bool, int> publish)
     {
         this.resumePath = resumePath;
@@ -125,6 +126,10 @@ internal sealed partial class ImageLibrary : IDisposable
 
         return Task.Run(() =>
         {
+            bool hasSavedLibrary = LibraryCache.HasEntries(cacheFile);
+            if (progressCallback != null)
+                progressCallback(0, hasSavedLibrary);
+
             if (!string.IsNullOrEmpty(this.resumePath) &&
                 IsQuickLocalFile(this.resumePath) && publish != null)
                 publish(new List<string> { this.resumePath }, false, LibraryStageResume);
@@ -148,7 +153,11 @@ internal sealed partial class ImageLibrary : IDisposable
                 }
             });
 
-            var found = LibraryScanner.Scan(imagePaths, ignorePaths, progressCallback, batch =>
+            var found = LibraryScanner.Scan(imagePaths, ignorePaths, count =>
+            {
+                if (progressCallback != null)
+                    progressCallback(count, hasSavedLibrary);
+            }, batch =>
             {
                 if (publish != null)
                     publish(batch, false, LibraryStageScan);

@@ -8,6 +8,29 @@ internal static class LibraryCache
 {
     private const string Header = "reelwalk-library-v1";
 
+    // True when a saved library has at least one path.
+    // path is ReelWalk.library. Does not read the whole file.
+    internal static bool HasEntries(string path)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                return false;
+
+            using (var reader = new StreamReader(path))
+            {
+                if (reader.ReadLine() != Header)
+                    return false;
+                var line = reader.ReadLine();
+                return line != null && line.Length > 0;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     // Reads the saved file list.
     // path is ReelWalk.library. Returns null when the file is missing or not this format.
     internal static List<string> Load(string path)
