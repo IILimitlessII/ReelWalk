@@ -151,6 +151,8 @@ internal static partial class ConfigService
         lines.Add(string.Format(CI, "transition_percent = {0:F1}", config.TransitionDurationPercent));
         lines.Add("# Contain = whole picture visible. Cover = fill the screen.");
         lines.Add("fit = " + Quote(string.IsNullOrEmpty(config.ImageFit) ? "Contain" : config.ImageFit));
+        lines.Add("# HarborBlue | DarkSlate | JungleGreen | MidnightSky | PastelDreams");
+        lines.Add("theme = " + Quote(ThemeCatalog.Normalize(config.Theme)));
         lines.Add("# 0.0 mute, 1.0 full.");
         lines.Add(string.Format(CI, "video_volume = {0:F2}", ClampVolume(config.VideoVolume)));
         lines.Add("");
@@ -236,6 +238,7 @@ internal static partial class ConfigService
         config.DisplayDuration = doc.Number("display.duration", config.DisplayDuration);
         config.TransitionDurationPercent = doc.Number("display.transition_percent", config.TransitionDurationPercent);
         config.ImageFit = doc.Text("display.fit", config.ImageFit);
+        config.Theme = ThemeCatalog.Normalize(doc.Text("display.theme", config.Theme));
         config.VideoVolume = ClampVolume(doc.Number("display.video_volume", config.VideoVolume));
 
         config.PlaybackMode = doc.Text("playback.mode", config.PlaybackMode);

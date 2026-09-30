@@ -20,6 +20,7 @@ internal sealed class SlideshowConfig
         KenBurnsDuration = 10.0;
         KenBurnsMaxZoom = 1.3;
         ImageFit = "Contain";
+        Theme = "HarborBlue";
         VideoVolume = 1.0;
         FolderPlayMode = "Random";
         FolderIncludeSubfolders = true;
@@ -47,6 +48,7 @@ internal sealed class SlideshowConfig
     internal double KenBurnsDuration { get; set; }
     internal double KenBurnsMaxZoom { get; set; }
     internal string ImageFit { get; set; }
+    internal string Theme { get; set; }
     internal double VideoVolume { get; set; }
     internal string FolderPlayMode { get; set; }
     internal bool FolderIncludeSubfolders { get; set; }

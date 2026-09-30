@@ -34,6 +34,12 @@ public partial class MainWindow : Window
     // Returns nothing.
     public MainWindow()
     {
+        try
+        {
+            ThemeCatalog.Apply(ConfigService.LoadConfig(ConfigService.FilePath).Theme);
+        }
+        catch { }
+
         _viewModel = new MainViewModel();
         DataContext = _viewModel;
 

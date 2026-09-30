@@ -5,6 +5,7 @@ using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ReelWalk.Models;
+using ReelWalk.Services;
 using ReelWalk.Services.Controls;
 
 namespace ReelWalk.ViewModels;
@@ -17,6 +18,7 @@ internal sealed partial class MainViewModel
     [ObservableProperty] private double _settingsDuration = 8;
     [ObservableProperty] private double _settingsTransitionPercent = 20;
     [ObservableProperty] private string _settingsFit = "Contain";
+    [ObservableProperty] private string _settingsTheme = "HarborBlue";
     [ObservableProperty] private double _settingsVolume = 1;
     [ObservableProperty] private string _settingsPlaybackMode = "Random";
     [ObservableProperty] private string _settingsMediaShow = "Both";
@@ -48,6 +50,31 @@ internal sealed partial class MainViewModel
     internal bool SettingsFitIsCover
     {
         get { return string.Equals(SettingsFit, "Cover", StringComparison.OrdinalIgnoreCase); }
+    }
+
+    internal bool SettingsThemeIsHarbor
+    {
+        get { return ThemeIs(ThemeCatalog.HarborBlue); }
+    }
+
+    internal bool SettingsThemeIsDarkSlate
+    {
+        get { return ThemeIs(ThemeCatalog.DarkSlate); }
+    }
+
+    internal bool SettingsThemeIsJungle
+    {
+        get { return ThemeIs(ThemeCatalog.JungleGreen); }
+    }
+
+    internal bool SettingsThemeIsMidnight
+    {
+        get { return ThemeIs(ThemeCatalog.MidnightSky); }
+    }
+
+    internal bool SettingsThemeIsPastel
+    {
+        get { return ThemeIs(ThemeCatalog.PastelDreams); }
     }
 
     internal bool SettingsModeIsRandom
@@ -222,6 +249,7 @@ internal sealed partial class MainViewModel
         SettingsDuration = cfg.DisplayDuration;
         SettingsTransitionPercent = cfg.TransitionDurationPercent;
         SettingsFit = string.IsNullOrEmpty(cfg.ImageFit) ? "Contain" : cfg.ImageFit;
+        SettingsTheme = ThemeCatalog.Normalize(cfg.Theme);
         SettingsVolume = cfg.VideoVolume;
         SettingsPlaybackMode = string.IsNullOrEmpty(cfg.PlaybackMode) ? "Random" : cfg.PlaybackMode;
         SettingsMediaShow = string.IsNullOrEmpty(cfg.MediaShow) ? "Both" : cfg.MediaShow;
@@ -263,6 +291,16 @@ internal sealed partial class MainViewModel
     {
         if (!_settingsReady || _playback == null) return;
         _playback.ApplyTransitionPercent(value);
+    }
+
+    partial void OnSettingsThemeChanged(string value)
+    {
+        var id = ThemeCatalog.Normalize(value);
+        ThemeCatalog.Apply(id);
+        NotifySettingsModeFlags();
+        if (!_settingsReady || _playback == null)
+            return;
+        _playback.Config.Theme = id;
     }
 
     partial void OnSettingsFitChanged(string value)
@@ -380,6 +418,12 @@ internal sealed partial class MainViewModel
     }
 
     [RelayCommand]
+    private void SetSettingsTheme(string theme)
+    {
+        SettingsTheme = ThemeCatalog.Normalize(theme);
+    }
+
+    [RelayCommand]
     private void SetSettingsPlaybackMode(string mode)
     {
         SettingsPlaybackMode = mode;
@@ -483,12 +527,24 @@ internal sealed partial class MainViewModel
         return string.Join(" ", parts);
     }
 
+    // True when SettingsTheme is id.
+    // id is a ThemeCatalog name.
+    private bool ThemeIs(string id)
+    {
+        return string.Equals(SettingsTheme, id, StringComparison.OrdinalIgnoreCase);
+    }
+
     // Refreshes boolean flags used by mode buttons.
     // Returns nothing.
     private void NotifySettingsModeFlags()
     {
         OnPropertyChanged(nameof(SettingsFitIsContain));
         OnPropertyChanged(nameof(SettingsFitIsCover));
+        OnPropertyChanged(nameof(SettingsThemeIsHarbor));
+        OnPropertyChanged(nameof(SettingsThemeIsDarkSlate));
+        OnPropertyChanged(nameof(SettingsThemeIsJungle));
+        OnPropertyChanged(nameof(SettingsThemeIsMidnight));
+        OnPropertyChanged(nameof(SettingsThemeIsPastel));
         OnPropertyChanged(nameof(SettingsModeIsRandom));
         OnPropertyChanged(nameof(SettingsModeIsNewest));
         OnPropertyChanged(nameof(SettingsModeIsOldest));

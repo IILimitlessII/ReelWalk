@@ -5,7 +5,7 @@
              HorizontalAlignment="Center"
              VerticalAlignment="Center"
              IsVisible="{Binding IsFolderMenuVisible}">
-    <Border Background="#141414F0"
+    <Border Background="{DynamicResource ThemePanelBrush}"
             Padding="20,16"
             MinWidth="320"
             MaxWidth="920"
@@ -142,7 +142,7 @@
                     </StackPanel>
 
                     <TextBlock Text="{Binding ExplorerQueryLabel}"
-                               Foreground="#5B94F5"
+                               Foreground="{DynamicResource ThemeLinkBrush}"
                                FontSize="13"
                                IsVisible="{Binding HasExplorerQuery}"/>
 
@@ -205,11 +205,11 @@
                                         </ControlTemplate>
                                     </Setter>
                                     <Style Selector="^:pointerover">
-                                        <Setter Property="Background" Value="#2F7CF044"/>
+                                        <Setter Property="Background" Value="{DynamicResource ThemeAccentWashBrush}"/>
                                     </Style>
                                     <Style Selector="^:selected">
-                                        <Setter Property="Background" Value="#2F7CF0"/>
-                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
                                     </Style>
                                 </ControlTheme>
                             </ListBox.Resources>
@@ -236,7 +236,7 @@
                                                            Text="{Binding StatusLabel}"
                                                            Margin="0,0,8,0"
                                                            VerticalAlignment="Center"
-                                                           Foreground="#93B8F8"
+                                                           Foreground="{DynamicResource ThemeLinkBrush}"
                                                            FontSize="11"/>
                                                 <TextBlock Text="{Binding Name}"
                                                            TextTrimming="CharacterEllipsis"

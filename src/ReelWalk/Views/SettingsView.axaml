@@ -6,7 +6,7 @@
              HorizontalAlignment="Center"
              VerticalAlignment="Center"
              IsVisible="{Binding IsSettingsVisible}">
-    <Border Background="#141414F0"
+    <Border Background="{DynamicResource ThemePanelBrush}"
             Padding="22,18"
             MinWidth="420"
             MaxWidth="720"
@@ -33,6 +33,32 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Spacing="16" Margin="0,0,28,0">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Theme" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Content="Harbor Blue" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsThemeIsHarbor}"
+                                    Command="{Binding SetSettingsThemeCommand}"
+                                    CommandParameter="HarborBlue"/>
+                            <Button Content="Dark Slate" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsThemeIsDarkSlate}"
+                                    Command="{Binding SetSettingsThemeCommand}"
+                                    CommandParameter="DarkSlate"/>
+                            <Button Content="Jungle Green" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsThemeIsJungle}"
+                                    Command="{Binding SetSettingsThemeCommand}"
+                                    CommandParameter="JungleGreen"/>
+                            <Button Content="Midnight Starry Sky" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsThemeIsMidnight}"
+                                    Command="{Binding SetSettingsThemeCommand}"
+                                    CommandParameter="MidnightSky"/>
+                            <Button Content="Pastel Dreams" Classes="mode" Margin="0,0,8,8"
+                                    Classes.hot="{Binding SettingsThemeIsPastel}"
+                                    Command="{Binding SetSettingsThemeCommand}"
+                                    CommandParameter="PastelDreams"/>
+                        </WrapPanel>
+                    </StackPanel>
+
                     <StackPanel Spacing="8">
                         <TextBlock Text="Display" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">

@@ -3,6 +3,20 @@
              x:Class="ReelWalk.App"
              RequestedThemeVariant="Dark">
     <Application.Resources>
+        <SolidColorBrush x:Key="ThemePanelBrush" Color="#CC141414"/>
+        <SolidColorBrush x:Key="ThemeSurfaceBrush" Color="#152238"/>
+        <SolidColorBrush x:Key="ThemeAccentBrush" Color="#2F7CF0"/>
+        <SolidColorBrush x:Key="ThemeAccentHoverBrush" Color="#5B94F5"/>
+        <SolidColorBrush x:Key="ThemeAccentPressBrush" Color="#2563EB"/>
+        <SolidColorBrush x:Key="ThemeAccentWashBrush" Color="#2F7CF044"/>
+        <SolidColorBrush x:Key="ThemeAccentSoftBrush" Color="#2F7CF055"/>
+        <SolidColorBrush x:Key="ThemeAccentMidBrush" Color="#2F7CF066"/>
+        <SolidColorBrush x:Key="ThemeAccentStrongBrush" Color="#2F7CF088"/>
+        <SolidColorBrush x:Key="ThemeSpinBrush" Color="#2F7CF033"/>
+        <SolidColorBrush x:Key="ThemeCaretBrush" Color="#5B94F5"/>
+        <SolidColorBrush x:Key="ThemeLinkBrush" Color="#5B94F5"/>
+        <SolidColorBrush x:Key="ThemeOnAccentBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="ThemeFieldTextBrush" Color="#FFFFFF"/>
         <!-- Hard-lock accent so Windows yellow never appears. -->
         <Color x:Key="SystemAccentColor">#2F7CF0</Color>
         <Color x:Key="SystemAccentColorDark1">#2563EB</Color>

@@ -2,10 +2,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Kill Fluent/Windows accent yellow on every button hover/press. -->
     <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2F7CF055"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentSoftBrush}"/>
     </Style>
     <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2F7CF088"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentStrongBrush}"/>
     </Style>
 
     <Style Selector="Button.folder">
@@ -20,25 +20,25 @@
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
     <Style Selector="Button.folder:pointerover">
-        <Setter Property="Background" Value="#2F7CF055"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentSoftBrush}"/>
     </Style>
     <Style Selector="Button.folder:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2F7CF055"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentSoftBrush}"/>
     </Style>
     <Style Selector="Button.folder.selected">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="#2F7CF0"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
     </Style>
     <Style Selector="Button.folder.selected /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2F7CF0"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
     </Style>
     <Style Selector="Button.folder.selected:pointerover">
-        <Setter Property="Background" Value="#5B94F5"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentHoverBrush}"/>
     </Style>
     <Style Selector="Button.folder.selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#5B94F5"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentHoverBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
     </Style>
 
     <Style Selector="Button.mode">
@@ -51,30 +51,30 @@
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
     <Style Selector="Button.mode:pointerover">
-        <Setter Property="Background" Value="#2F7CF055"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentSoftBrush}"/>
     </Style>
     <Style Selector="Button.mode:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2F7CF055"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentSoftBrush}"/>
     </Style>
     <Style Selector="Button.mode.hot">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="#2F7CF0"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
     </Style>
     <Style Selector="Button.mode.hot /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2F7CF0"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
     </Style>
     <Style Selector="Button.mode.hot:pointerover">
-        <Setter Property="Background" Value="#5B94F5"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentHoverBrush}"/>
     </Style>
     <Style Selector="Button.mode.hot:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#5B94F5"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentHoverBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
     </Style>
 
-    <!-- Custom stepper arrows: hardcoded blue, never OS accent. -->
+    <!-- Stepper arrows follow the active theme. -->
     <Style Selector="Button.spin">
-        <Setter Property="Background" Value="#2F7CF033"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeSpinBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="CornerRadius" Value="3"/>
@@ -82,27 +82,27 @@
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
     </Style>
     <Style Selector="Button.spin:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2F7CF0"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
     </Style>
     <Style Selector="Button.spin:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="#2563EB"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentPressBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeOnAccentBrush}"/>
     </Style>
 
-    <!-- Settings text fields: selection/caret/focus all blue. -->
+    <!-- Settings text fields: selection and caret follow the theme. -->
     <Style Selector="TextBox.bluefield">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="CaretBrush" Value="#5B94F5"/>
-        <Setter Property="SelectionBrush" Value="#2F7CF088"/>
-        <Setter Property="SelectionForegroundBrush" Value="White"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeFieldTextBrush}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource ThemeCaretBrush}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource ThemeAccentStrongBrush}"/>
+        <Setter Property="SelectionForegroundBrush" Value="{DynamicResource ThemeFieldTextBrush}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
     <Style Selector="TextBox.bluefield:focus">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="CaretBrush" Value="#5B94F5"/>
-        <Setter Property="SelectionBrush" Value="#2F7CF088"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeFieldTextBrush}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource ThemeCaretBrush}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource ThemeAccentStrongBrush}"/>
     </Style>
     <Style Selector="TextBox.bluefield /template/ Border#PART_BorderElement">
         <Setter Property="Background" Value="Transparent"/>
@@ -120,9 +120,9 @@
     </Style>
 
     <Style Selector="ScrollBar /template/ Thumb">
-        <Setter Property="Background" Value="#2F7CF066"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentMidBrush}"/>
     </Style>
     <Style Selector="ScrollBar /template/ Thumb:pointerover">
-        <Setter Property="Background" Value="#2F7CF0"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
     </Style>
 </Styles>

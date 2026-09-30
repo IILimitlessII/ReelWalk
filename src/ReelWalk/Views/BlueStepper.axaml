@@ -5,15 +5,15 @@
     <UserControl.Styles>
         <!-- Full templates — no Fluent resources, so OS yellow cannot appear. -->
         <Style Selector="TextBox.bluefield">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="#152238"/>
-            <Setter Property="CaretBrush" Value="#5B94F5"/>
-            <Setter Property="SelectionBrush" Value="#2F7CF088"/>
+            <Setter Property="Foreground" Value="{DynamicResource ThemeFieldTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource ThemeCaretBrush}"/>
+            <Setter Property="SelectionBrush" Value="{DynamicResource ThemeAccentStrongBrush}"/>
             <Setter Property="Padding" Value="8,4"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <ControlTemplate>
-                    <Border Background="#152238"
+                    <Border Background="{DynamicResource ThemeSurfaceBrush}"
                             Padding="{TemplateBinding Padding}">
                         <TextPresenter Name="PART_TextPresenter"
                                        Text="{TemplateBinding Text}"
@@ -24,10 +24,10 @@
                                        TextWrapping="{TemplateBinding TextWrapping}"
                                        PasswordChar="{TemplateBinding PasswordChar}"
                                        RevealPassword="{TemplateBinding RevealPassword}"
-                                       CaretBrush="#5B94F5"
-                                       SelectionBrush="#2F7CF088"
-                                       SelectionForegroundBrush="White"
-                                       TextElement.Foreground="White"
+                                       CaretBrush="{DynamicResource ThemeCaretBrush}"
+                                       SelectionBrush="{DynamicResource ThemeAccentStrongBrush}"
+                                       SelectionForegroundBrush="{DynamicResource ThemeFieldTextBrush}"
+                                       TextElement.Foreground="{DynamicResource ThemeFieldTextBrush}"
                                        TextElement.FontSize="14"
                                        HorizontalAlignment="Stretch"
                                        VerticalAlignment="Center"/>
@@ -37,7 +37,7 @@
         </Style>
         <Style Selector="Button.spin">
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="#2F7CF044"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentWashBrush}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -56,14 +56,14 @@
             </Setter>
         </Style>
         <Style Selector="Button.spin:pointerover">
-            <Setter Property="Background" Value="#2F7CF0"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}"/>
         </Style>
         <Style Selector="Button.spin:pressed">
-            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentPressBrush}"/>
         </Style>
     </UserControl.Styles>
-    <Border Background="#152238"
-            BorderBrush="#2F7CF0"
+    <Border Background="{DynamicResource ThemeSurfaceBrush}"
+            BorderBrush="{DynamicResource ThemeAccentBrush}"
             BorderThickness="1"
             CornerRadius="6"
             Padding="2">
