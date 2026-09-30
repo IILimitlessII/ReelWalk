@@ -113,8 +113,8 @@ internal static partial class ConfigService
         if (isDefault || config.ImagePaths == null || config.ImagePaths.Count == 0)
         {
             lines.Add("# paths = [");
-            lines.Add("#     \"C:\\\\Users\\\\Public\\\\Pictures\",");
-            lines.Add("#     \"\\\\\\\\server\\\\photos\",");
+            lines.Add("#     \"C:\\\\Photos\",");
+            lines.Add("#     \"D:\\\\Pictures\",");
             lines.Add("# ]");
             lines.Add("paths = []");
         }
@@ -131,7 +131,7 @@ internal static partial class ConfigService
         if (isDefault || config.IgnorePaths == null || config.IgnorePaths.Count == 0)
         {
             lines.Add("# ignore = [");
-            lines.Add("#     \"G:\\\\other\\\\Indexes\",");
+            lines.Add("#     \"C:\\\\Photos\\\\Skip\",");
             lines.Add("# ]");
             lines.Add("ignore = []");
         }

@@ -4,6 +4,7 @@
         xmlns:vlc="using:LibVLCSharp.Avalonia"
         x:Class="ReelWalk.Views.MainWindow"
         Title="ReelWalk"
+        Icon="avares://ReelWalk/Assets/logo.png"
         SystemDecorations="None"
         WindowState="FullScreen"
         Background="Black"

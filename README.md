@@ -38,34 +38,48 @@ On Linux, install LibVLC from your distro (`libvlc`) so videos can play. The Win
 
 <table>
 <tr>
-<td width="50%" valign="top">
-
-**One playlist**
+<td width="50%" align="center" valign="top">
+<strong>One playlist</strong>
+<br><br>
 Photos and videos play together. You can limit it to either.
-
-**Playback order**
-Random, newest, oldest, or name order. Random remembers the files you just saw.
-
-**Folder play**
-Press <kbd>F</kbd> or right-click. Play one folder, then return to the library.
-
 </td>
-<td width="50%" valign="top">
-
-**Motion**
+<td width="50%" align="center" valign="top">
+<strong>Motion</strong>
+<br><br>
 Crossfade, zoom, wipe, and Ken Burns. Turn any of them off.
-
-**Large libraries**
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<strong>Playback order</strong>
+<br><br>
+Random, newest, oldest, or name order. Random remembers the files you just saw.
+</td>
+<td width="50%" align="center" valign="top">
+<strong>Large libraries</strong>
+<br><br>
 Recursive scan, folders you can ignore, and a saved file list so the next open is quick.
-
-**Look**
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<strong>Folder play</strong>
+<br><br>
+Press <kbd>F</kbd> or right-click. Play one folder, then return to the library.
+</td>
+<td width="50%" align="center" valign="top">
+<strong>Look</strong>
+<br><br>
 Five themes, a contain or cover fit, and a tray menu for pause, next, and folders.
-
 </td>
 </tr>
 </table>
 
-Formats: JPEG, PNG, GIF, BMP, TIFF, WebP. HEIC, HEIF, AVIF, and HD Photo are picked up and skipped if they cannot be decoded. Videos: MP4, M4V, WMV, AVI, MOV, MKV, WebM.
+| Kind | Formats |
+|---|---|
+| Photos | JPEG, PNG, GIF, BMP, TIFF, WebP |
+| Also scanned | HEIC, HEIF, AVIF, HD Photo. Skipped when a file cannot be decoded |
+| Videos | MP4, M4V, WMV, AVI, MOV, MKV, WebM |
 
 A photo that will not open is skipped. New files show up on their own.
 
@@ -77,7 +91,7 @@ These are the defaults. Change any of them under `[controls]` in `ReelWalk.toml`
 
 | Key | What it does |
 |---|---|
-| <kbd>→</kbd> <kbd>←</kbd> or the wheel | Next or previous file |
+| <kbd>←</kbd> <kbd>→</kbd>  or the wheel | Next or previous file |
 | <kbd>Space</kbd> or middle-click | Pause |
 | <kbd>R</kbd> <kbd>N</kbd> <kbd>S</kbd> | Random, newest by date taken, or name order |
 | <kbd>V</kbd> | Photos, videos, or both |
@@ -124,12 +138,12 @@ A short `ReelWalk.toml` is enough to begin:
 
 ```toml
 paths = [
-    "C:\\Users\\Public\\Pictures",
-    "\\\\server\\photos",
+    "C:\\Photos",
+    "D:\\Pictures",
 ]
 
 ignore = [
-    "G:\\other\\Indexes",
+    "C:\\Photos\\Skip",
 ]
 
 [display]
@@ -150,12 +164,12 @@ Themes: Harbor Blue, Dark Slate, Jungle Green, Midnight Starry Sky, Pastel Dream
 
 ```toml
 paths = [
-    "C:\\Users\\Public\\Pictures",
-    "\\\\server\\photos",
+    "C:\\Photos",
+    "D:\\Pictures",
 ]
 
 ignore = [
-    "G:\\other\\Indexes",
+    "C:\\Photos\\Skip",
 ]
 
 [display]

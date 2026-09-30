@@ -1,11 +1,10 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using SkiaSharp;
 using ReelWalk.Services;
 
 namespace ReelWalk.Views;
@@ -223,37 +222,12 @@ public partial class MainWindow
         return item;
     }
 
-    // Builds a small tray icon.
+    // Loads the app logo for the tray.
     // Returns the icon.
     private static WindowIcon CreateTrayIcon()
     {
-        var info = new SKImageInfo(16, 16);
-        using (var surface = SKSurface.Create(info))
-        {
-            var canvas = surface.Canvas;
-            canvas.Clear(new SKColor(30, 30, 30));
-            using (var paint = new SKPaint { Color = new SKColor(100, 180, 255), IsAntialias = true })
-                canvas.DrawRect(2, 2, 12, 12, paint);
-            using (var paint = new SKPaint { Color = new SKColor(50, 120, 50), IsAntialias = true })
-            {
-                using (var path = new SKPath())
-                {
-                    path.MoveTo(2, 14);
-                    path.LineTo(8, 6);
-                    path.LineTo(14, 14);
-                    path.Close();
-                    canvas.DrawPath(path, paint);
-                }
-            }
-            using (var paint = new SKPaint { Color = new SKColor(255, 220, 60), IsAntialias = true })
-                canvas.DrawOval(11, 5, 2, 2, paint);
-            using (var image = surface.Snapshot())
-            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-            {
-                var stream = new MemoryStream(data.ToArray());
-                return new WindowIcon(stream);
-            }
-        }
+        var stream = AssetLoader.Open(new Uri("avares://ReelWalk/Assets/logo.png"));
+        return new WindowIcon(stream);
     }
 
     // Asks the user to pick a folder.
