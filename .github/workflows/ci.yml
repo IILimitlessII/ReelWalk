@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Run tests
+        run: dotnet test ReelWalk.slnx -c Release --verbosity minimal
+
+  build:
+    name: Build
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Publish Windows and Linux binaries
+        run: bash ./scripts/build.sh
+
+      - name: Stage release files
+        run: |
+          mkdir -p release
+          cp build/win-x64/ReelWalk.exe release/ReelWalk-windows-x64.exe
+          cp build/linux-x64/ReelWalk release/ReelWalk-linux-x64
+          chmod +x release/ReelWalk-linux-x64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ReelWalk-${{ github.sha }}
+          path: |
+            release/ReelWalk-windows-x64.exe
+            release/ReelWalk-linux-x64
+          if-no-files-found: error
+
+  release:
+    name: Release
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ReelWalk-${{ github.sha }}
+          path: release
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${ACT:-}" = "true" ]; then
+            echo "act is running this workflow locally, so no GitHub release is created."
+            exit 0
+          fi
+          short=$(git rev-parse --short=7 HEAD)
+          tag="v1.0.0-${short}"
+          notes="Windows and Linux builds from ${short}. The Linux build needs LibVLC from the distro: sudo apt install libvlc5 vlc-plugin-base"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" \
+              release/ReelWalk-windows-x64.exe \
+              release/ReelWalk-linux-x64 \
+              --clobber
+          else
+            gh release create "$tag" \
+              release/ReelWalk-windows-x64.exe \
+              release/ReelWalk-linux-x64 \
+              --target "$GITHUB_SHA" \
+              --title "ReelWalk ${short}" \
+              --notes "$notes"
+          fi

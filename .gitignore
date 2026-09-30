@@ -2,6 +2,7 @@
 [Bb]in/
 [Oo]bj/
 build/
+release/
 
 # IDE / OS
 .vs/
