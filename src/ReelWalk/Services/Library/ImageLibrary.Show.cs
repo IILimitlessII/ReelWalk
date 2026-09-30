@@ -21,7 +21,7 @@ internal sealed partial class ImageLibrary
 
         if (folderPlayActive)
         {
-            if (folderRemaining <= 0)
+            if (folderRemaining <= 0 && !folderListFilling)
             {
                 RestoreSavedPlaylist(GetCurrentImagePath());
                 if (playbackOrder.Count == 0) return;

@@ -397,17 +397,19 @@ internal sealed partial class MainViewModel
         if (_playback == null)
             return;
 
-        bool ok = _playback.PlayFolder(choice.FullPath);
         string how = FolderPlayIsRandom ? "random" : "ordered";
-        if (ok)
-            ShowToast(string.Format("Playing {0}   ·   {1:N0}   ·   {2}",
-                choice.Name, _playback.ImageCount, how), false);
-        else
-            ShowToast("No other files in " + choice.Name, false);
+        _playback.PlayFolder(choice.FullPath, ok =>
+        {
+            if (ok)
+                ShowToast(string.Format("Playing {0}   ·   {1:N0}   ·   {2}",
+                    choice.Name, _playback.ImageCount, how), false);
+            else
+                ShowToast("No other files in " + choice.Name, false);
 
-        IsFolderPlaying = _playback.IsFolderPlay;
-        RefreshInfo();
-        RefreshPath();
+            IsFolderPlaying = _playback.IsFolderPlay;
+            RefreshInfo();
+            RefreshPath();
+        });
     }
 
     // Plays the open folder in name order.

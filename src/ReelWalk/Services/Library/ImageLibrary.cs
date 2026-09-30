@@ -36,6 +36,8 @@ internal sealed partial class ImageLibrary : IDisposable
     private int savedIndex;
     private string savedMode;
     private int folderRemaining;
+    private int folderPlayGeneration;
+    private bool folderListFilling;
     private string folderPlayMode = "Random";
     private string folderPlayPath;
     private bool folderIncludeSubfolders = true;

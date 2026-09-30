@@ -9,25 +9,26 @@ internal sealed partial class PlaybackService
 {
     // Plays folderPath, then returns to the previous playlist when it finishes.
     // Returns false when fewer than two files can play.
-    internal bool PlayFolder(string folderPath)
+    internal bool PlayFolder(string folderPath, Action<bool> ready)
     {
-        var before = imageManager.GetCurrentImagePath();
-        if (!imageManager.EnterFolderPlay(folderPath, config.FolderPlayMode))
-            return false;
+        if (imageManager.EnterFolderPlay(folderPath, config.FolderPlayMode, config.IgnorePaths, ok =>
+        {
+            if (ok)
+            {
+                firstImage = true;
+                ShowCurrentImage();
+                var handler = ImageChanged;
+                if (handler != null)
+                    handler(this, EventArgs.Empty);
+            }
+            if (ready != null)
+                ready(ok);
+        }))
+            return true;
 
-        var after = imageManager.GetCurrentImagePath();
-        if (!string.Equals(before, after, StringComparison.OrdinalIgnoreCase))
-        {
-            firstImage = true;
-            ShowCurrentImage();
-        }
-        else
-        {
-            var handler = ImageChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-        return true;
+        if (ready != null)
+            ready(false);
+        return false;
     }
 
     // Restores the playlist from before folder play.

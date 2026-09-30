@@ -30,6 +30,7 @@ internal sealed partial class TransitionService
     private string pendingVideoPath;
     private readonly DispatcherTimer completionTimer;
     private CancellationTokenSource motion = new CancellationTokenSource();
+    private readonly List<DispatcherTimer> tweens = new List<DispatcherTimer>();
 
     private static readonly Easing EaseInOut = new QuadraticEaseInOut();
     private static readonly Easing CubicInOut = new CubicEaseInOut();

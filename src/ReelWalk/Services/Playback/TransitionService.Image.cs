@@ -6,7 +6,7 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Styling;
+using Avalonia.Threading;
 using ReelWalk.Models;
 
 namespace ReelWalk.Services;
@@ -254,45 +254,45 @@ internal sealed partial class TransitionService
         motion.Cancel();
         motion.Dispose();
         motion = new CancellationTokenSource();
+        for (int i = 0; i < tweens.Count; i++)
+            tweens[i].Stop();
+        tweens.Clear();
     }
 
-    // Starts an animation on a double property.
-    // ease may be null. Returns nothing.
+    // Moves a double property from one value to another.
+    // Avalonia cannot run its animator on a scale or translate transform. ease may be null. Returns nothing.
     private void Run(Animatable target, AvaloniaProperty<double> prop, double from, double to, TimeSpan dur, Easing ease)
     {
-        var animation = new Animation
-        {
-            Duration = dur,
-            FillMode = FillMode.Forward,
-            Easing = ease ?? new LinearEasing(),
-            Children =
-            {
-                new KeyFrame
-                {
-                    Cue = new Cue(0d),
-                    Setters = { new Setter(prop, from) }
-                },
-                new KeyFrame
-                {
-                    Cue = new Cue(1d),
-                    Setters = { new Setter(prop, to) }
-                }
-            }
-        };
-        Start(animation, target, motion.Token);
-    }
+        if (target == null)
+            return;
 
-    // Runs animation and ignores a cancel.
-    // token stops it. Returns nothing.
-    private static async void Start(Animation animation, Animatable target, CancellationToken token)
-    {
-        try
+        var easing = ease ?? new LinearEasing();
+        target.SetValue(prop, from);
+        if (dur.TotalMilliseconds <= 0)
         {
-            await animation.RunAsync(target, token);
+            target.SetValue(prop, to);
+            return;
         }
-        catch (OperationCanceledException)
+
+        long start = Environment.TickCount64;
+        double ms = dur.TotalMilliseconds;
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+        tweens.Add(timer);
+        timer.Tick += (s, e) =>
         {
-        }
+            double p = (Environment.TickCount64 - start) / ms;
+            if (p >= 1)
+            {
+                target.SetValue(prop, to);
+                timer.Stop();
+                tweens.Remove(timer);
+                return;
+            }
+            if (p < 0)
+                p = 0;
+            target.SetValue(prop, from + (to - from) * easing.Ease(p));
+        };
+        timer.Start();
     }
 
     // Fades target to invisible.

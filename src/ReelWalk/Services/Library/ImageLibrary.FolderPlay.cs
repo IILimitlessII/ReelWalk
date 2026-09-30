@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using ReelWalk.Models;
 using ReelWalk.Services.Playback;
 
@@ -13,15 +14,17 @@ namespace ReelWalk.Services;
 internal sealed partial class ImageLibrary : IDisposable
 {
     // Plays folderPath, including subfolders unless that choice is off.
-    // mode is Random or Sequential. Returns false when fewer than two files can play.
-    internal bool EnterFolderPlay(string folderPath, string mode)
+    // mode is Random or Sequential. ready runs on the UI thread with false when nothing can play.
+    // Returns false when the folder does not exist.
+    internal bool EnterFolderPlay(string folderPath, string mode, IList<string> ignorePaths, Action<bool> ready)
     {
         if (string.IsNullOrWhiteSpace(folderPath))
             return false;
 
+        var folder = Paths.Normalize(folderPath);
         try
         {
-            if (!Directory.Exists(folderPath))
+            if (folder == null || !Directory.Exists(folder))
                 return false;
         }
         catch
@@ -29,38 +32,79 @@ internal sealed partial class ImageLibrary : IDisposable
             return false;
         }
 
-        var folderFiles = CollectFolderFiles(folderPath);
-        if (folderFiles.Count <= 1)
-            return false;
-
-        // Remember newly found paths so the main library grows with folder play.
-        AbsorbFiles(folderFiles, false);
-
+        folderPlayGeneration++;
+        int gen = folderPlayGeneration;
         mode = NormalizeFolderMode(mode);
-        OrderFolderFiles(folderFiles, mode);
-
-        var current = GetCurrentImagePath();
-        int start = FindPath(folderFiles, current);
-        if (start < 0) start = 0;
-
-        if (!folderPlayActive)
-        {
-            savedPlaybackOrder = playbackOrder;
-            savedIndex = currentIndex;
-            savedMode = currentMode ?? "Random";
-            folderPlayActive = true;
-        }
-
         folderPlayMode = mode;
-        folderPlayPath = folderPath;
-        currentMode = "Folder";
-        playbackOrder = folderFiles;
-        RebuildPlaybackIndex();
-        currentIndex = start;
-        folderRemaining = playbackOrder.Count - 1;
+        folderPlayPath = folder;
+        bool includeSub = folderIncludeSubfolders;
+        string show = mediaShow;
+        var ignore = PathFilter.From(ignorePaths);
+        var paths = allImagePaths == null ? new List<string>() : new List<string>(allImagePaths);
+        var norms = normalizedAll == null ? new List<string>() : new List<string>(normalizedAll);
+        var dispatcher = Dispatcher.UIThread;
 
-        history.Clear();
-        PrepareShown();
+        Task.Run(() =>
+        {
+            var known = TakeFolderFiles(paths, norms, folder, includeSub, show);
+            if (known.Count >= 2)
+            {
+                OrderFolderFiles(known, mode);
+                dispatcher.Post(() => InstallFolderPlaylist(gen, known, 0, false, ready));
+                return;
+            }
+
+            string starter = null;
+            string randomPick = null;
+            int seen = 0;
+            var rng = new Random();
+            var gathered = new List<string>();
+            WalkFolderFiles(folder, includeSub, show, ignore, file =>
+            {
+                if (starter == null)
+                    starter = file;
+                seen++;
+                if (rng.Next(seen) == 0)
+                    randomPick = file;
+                gathered.Add(file);
+                if (gathered.Count == 1 || gathered.Count % 128 == 0)
+                {
+                    var batch = gathered;
+                    gathered = new List<string>();
+                    var open = starter;
+                    dispatcher.Post(() => AppendFolderBatch(gen, batch, open, false, ready));
+                }
+            });
+
+            if (gathered.Count > 0)
+            {
+                var last = gathered;
+                var open = starter;
+                var pick = IsRandom(mode) ? randomPick : null;
+                dispatcher.Post(() =>
+                {
+                    AppendFolderBatch(gen, last, open, true, ready);
+                    FinishFolderOrder(gen, pick, open);
+                });
+            }
+            else
+            {
+                var pick = IsRandom(mode) ? randomPick : null;
+                var open = starter;
+                dispatcher.Post(() =>
+                {
+                    if (gen != folderPlayGeneration)
+                        return;
+                    if (starter == null)
+                    {
+                        if (ready != null)
+                            ready(false);
+                        return;
+                    }
+                    FinishFolderOrder(gen, pick, open);
+                });
+            }
+        });
         return true;
     }
 
@@ -155,64 +199,261 @@ internal sealed partial class ImageLibrary : IDisposable
             normalizedAll.RemoveAt(at);
     }
 
-    // Playable files for folder play, collected from the filesystem.
-    // folderPath is the chosen folder. Subfolders are included unless that choice is off.
-    private List<string> CollectFolderFiles(string folderPath)
+    // Puts an ordered folder list on screen.
+    // ready runs when there is something to play. Returns nothing.
+    private void InstallFolderPlaylist(int gen, List<string> files, int start, bool filling, Action<bool> ready)
+    {
+        if (gen != folderPlayGeneration)
+            return;
+        if (files == null || files.Count < 2)
+        {
+            if (ready != null)
+                ready(false);
+            return;
+        }
+
+        if (!folderPlayActive)
+        {
+            savedPlaybackOrder = playbackOrder;
+            savedIndex = currentIndex;
+            savedMode = currentMode ?? "Random";
+            folderPlayActive = true;
+        }
+
+        currentMode = "Folder";
+        folderListFilling = filling;
+        playbackOrder = files;
+        RebuildPlaybackIndex();
+        if (start < 0 || start >= files.Count)
+            start = 0;
+        currentIndex = start;
+        folderRemaining = Math.Max(0, files.Count - 1);
+        history.Clear();
+        PrepareShown();
+        if (ready != null)
+            ready(true);
+    }
+
+    // Adds one scanned batch. The first batch starts playback.
+    // starter is the first file found. Returns nothing.
+    private void AppendFolderBatch(int gen, List<string> batch, string starter, bool complete, Action<bool> ready)
+    {
+        if (gen != folderPlayGeneration)
+            return;
+        if (batch == null || batch.Count == 0)
+        {
+            if (complete && string.IsNullOrEmpty(starter) && ready != null)
+                ready(false);
+            return;
+        }
+
+        bool starting = !folderPlayActive;
+        if (starting)
+        {
+            savedPlaybackOrder = playbackOrder;
+            savedIndex = currentIndex;
+            savedMode = currentMode ?? "Random";
+            folderPlayActive = true;
+            currentMode = "Folder";
+            folderListFilling = true;
+            playbackOrder = new List<string>();
+            RebuildPlaybackIndex();
+            history.Clear();
+        }
+
+        RememberInLibrary(batch);
+        int from = playbackOrder.Count;
+        for (int i = 0; i < batch.Count; i++)
+        {
+            var path = batch[i];
+            if (string.IsNullOrEmpty(path) || playbackIndex.ContainsKey(path))
+                continue;
+            playbackOrder.Add(path);
+        }
+        NotePlaybackAdded(from);
+        folderRemaining = Math.Max(folderRemaining, Math.Max(0, playbackOrder.Count - 1));
+
+        if (!starting)
+            return;
+
+        currentIndex = 0;
+        PrepareShown();
+        if (ready != null)
+            ready(playbackOrder.Count > 0);
+    }
+
+    // After a disk walk, order the folder and keep the file on screen unless it is still the opener.
+    // randomPick is the uniform random file. starter is the first file shown. Returns nothing.
+    private void FinishFolderOrder(int gen, string randomPick, string starter)
+    {
+        if (gen != folderPlayGeneration || !folderPlayActive || playbackOrder == null)
+            return;
+
+        folderListFilling = false;
+        if (playbackOrder.Count < 2)
+        {
+            RestoreSavedPlaylist(GetCurrentImagePath());
+            return;
+        }
+
+        var keep = GetCurrentImagePath();
+        bool stillOpener = string.Equals(keep, starter, StringComparison.OrdinalIgnoreCase);
+        if (IsRandom(folderPlayMode))
+            ShuffleInPlace(playbackOrder);
+        else
+            playbackOrder.Sort(StringComparer.OrdinalIgnoreCase);
+        RebuildPlaybackIndex();
+
+        int idx = FindPath(playbackOrder, keep);
+        if (stillOpener && IsRandom(folderPlayMode) && !string.IsNullOrEmpty(randomPick))
+        {
+            int pick = FindPath(playbackOrder, randomPick);
+            if (pick >= 0)
+                idx = pick;
+        }
+        else if (stillOpener && !IsRandom(folderPlayMode))
+        {
+            idx = 0;
+        }
+        if (idx < 0)
+            idx = 0;
+        currentIndex = idx;
+        folderRemaining = Math.Max(0, playbackOrder.Count - 1);
+        PrepareShown();
+    }
+
+    // Adds paths the folder walk found that the library did not already know.
+    // Returns nothing.
+    private void RememberInLibrary(IList<string> files)
+    {
+        if (files == null)
+            return;
+        if (knownPaths == null)
+            knownPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        var added = new List<string>();
+        for (int i = 0; i < files.Count; i++)
+        {
+            var path = files[i];
+            if (string.IsNullOrEmpty(path))
+                continue;
+            if (knownPaths.Add(path))
+                added.Add(path);
+        }
+        if (added.Count > 0)
+            AppendLibraryFiles(added);
+    }
+
+    // Indexed files that sit in folder.
+    // Returns the matching paths.
+    private static List<string> TakeFolderFiles(
+        List<string> paths,
+        List<string> norms,
+        string folder,
+        bool includeSub,
+        string show)
     {
         var files = new List<string>();
+        if (paths == null || norms == null)
+            return files;
+        int n = paths.Count < norms.Count ? paths.Count : norms.Count;
+        for (int i = 0; i < n; i++)
+        {
+            if (!InFolder(norms[i], folder, includeSub))
+                continue;
+            if (MediaTypes.Allows(paths[i], show))
+                files.Add(paths[i]);
+        }
+        return files;
+    }
+
+    // True when normalized file sits in folder.
+    // includeSub false keeps only files directly inside folder.
+    private static bool InFolder(string file, string folder, bool includeSub)
+    {
+        if (string.IsNullOrEmpty(file) || string.IsNullOrEmpty(folder))
+            return false;
+        if (file.Length <= folder.Length)
+            return false;
+        if (!file.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+            return false;
+        char sep = file[folder.Length];
+        if (sep != '\\' && sep != '/')
+            return false;
+        if (includeSub)
+            return true;
+        return file.IndexOf('\\', folder.Length + 1) < 0 &&
+               file.IndexOf('/', folder.Length + 1) < 0;
+    }
+
+    // Walks folder on disk and calls accept for each playable file.
+    // ignore skips those folders. A repeated directory is not walked again. Returns nothing.
+    private static void WalkFolderFiles(
+        string folder,
+        bool includeSub,
+        string show,
+        PathFilter ignore,
+        Action<string> accept)
+    {
+        var seenDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var seenFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (!seenDirs.Add(folder) || (ignore != null && ignore.Blocks(folder)))
+            return;
+
+        var dirs = new Queue<string>();
+        dirs.Enqueue(folder);
+        while (dirs.Count > 0)
+        {
+            var dir = dirs.Dequeue();
+            if (includeSub)
+            {
+                try
+                {
+                    foreach (var sub in Directory.EnumerateDirectories(dir))
+                    {
+                        var norm = Paths.Normalize(sub);
+                        if (norm == null || !seenDirs.Add(norm))
+                            continue;
+                        if (ignore != null && ignore.Blocks(norm))
+                            continue;
+                        dirs.Enqueue(norm);
+                    }
+                }
+                catch { }
+            }
+
+            try
+            {
+                foreach (var file in Directory.EnumerateFiles(dir))
+                {
+                    if (!MediaTypes.Allows(file, show) || !seenFiles.Add(file))
+                        continue;
+                    if (ignore != null && ignore.Blocks(file))
+                        continue;
+                    if (accept != null)
+                        accept(file);
+                }
+            }
+            catch { }
+
+            if (!includeSub)
+                break;
+        }
+    }
+
+    // Playable files for folder play.
+    // Uses the indexed library. A disk walk runs only when the index has nothing there.
+    private List<string> CollectFolderFiles(string folderPath)
+    {
         var folder = Paths.Normalize(folderPath);
         if (folder == null)
+            return new List<string>();
+
+        var files = TakeFolderFiles(allImagePaths, normalizedAll, folder, folderIncludeSubfolders, mediaShow);
+        if (files.Count > 0)
             return files;
 
-        try
-        {
-            if (!Directory.Exists(folder))
-                return files;
-        }
-        catch
-        {
-            return files;
-        }
-
-        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        try
-        {
-            if (folderIncludeSubfolders)
-            {
-                var dirs = new Queue<string>();
-                dirs.Enqueue(folder);
-                while (dirs.Count > 0)
-                {
-                    var dir = dirs.Dequeue();
-                    try
-                    {
-                        foreach (var sub in Directory.EnumerateDirectories(dir))
-                            dirs.Enqueue(sub);
-                    }
-                    catch { }
-
-                    try
-                    {
-                        foreach (var file in Directory.EnumerateFiles(dir))
-                        {
-                            if (MediaTypes.Allows(file, mediaShow) && seen.Add(file))
-                                files.Add(file);
-                        }
-                    }
-                    catch { }
-                }
-            }
-            else
-            {
-                foreach (var file in Directory.EnumerateFiles(folder))
-                {
-                    if (MediaTypes.Allows(file, mediaShow) && seen.Add(file))
-                        files.Add(file);
-                }
-            }
-        }
-        catch { }
-
+        WalkFolderFiles(folder, folderIncludeSubfolders, mediaShow, null, files.Add);
         return files;
     }
 
@@ -224,6 +465,7 @@ internal sealed partial class ImageLibrary : IDisposable
         if (!folderPlayActive || string.IsNullOrEmpty(folderPlayPath))
             return false;
 
+        folderPlayGeneration++;
         var folderFiles = CollectFolderFiles(folderPlayPath);
         if (folderFiles.Count == 0)
         {
@@ -233,6 +475,7 @@ internal sealed partial class ImageLibrary : IDisposable
 
         OrderFolderFiles(folderFiles, folderPlayMode);
 
+        folderListFilling = false;
         playbackOrder = folderFiles;
         RebuildPlaybackIndex();
         PlaceOn(GetCurrentImagePath());
@@ -258,6 +501,8 @@ internal sealed partial class ImageLibrary : IDisposable
     // Returns nothing.
     private void RestoreSavedPlaylist(string keepPath)
     {
+        folderPlayGeneration++;
+        folderListFilling = false;
         folderPlayActive = false;
         folderPlayPath = null;
         folderRemaining = 0;
