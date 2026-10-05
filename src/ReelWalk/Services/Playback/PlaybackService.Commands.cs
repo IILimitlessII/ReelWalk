@@ -43,16 +43,11 @@ internal sealed partial class PlaybackService
             handler(this, EventArgs.Empty);
     }
 
-    // Sets random or ordered playback for folder play.
-    // mode Sequential is path order. Returns nothing.
+    // Sets how a folder is ordered.
+    // mode is Random, Sequential, SizeAsc, SizeDesc, LengthAsc, or LengthDesc. Returns nothing.
     internal void SetFolderPlayMode(string mode)
     {
-        if (string.Equals(mode, "Random", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(mode, "Shuffle", StringComparison.OrdinalIgnoreCase))
-            config.FolderPlayMode = "Random";
-        else
-            config.FolderPlayMode = "Sequential";
-
+        config.FolderPlayMode = FolderOrder.Normalize(mode);
         imageManager.ApplyFolderPlayMode(config.FolderPlayMode);
     }
 
@@ -216,8 +211,7 @@ internal sealed partial class PlaybackService
 
         string status = isPaused ? "PAUSED" : (videoPlaying ? "VIDEO" : "PLAYING");
         string mode = imageManager.IsFolderPlay
-            ? "Folder (" + (string.Equals(imageManager.FolderPlayMode, "Random", StringComparison.OrdinalIgnoreCase)
-                ? "random" : "ordered") + ") → " + imageManager.FolderResumeMode
+            ? "Folder (" + FolderOrder.Label(imageManager.FolderPlayMode) + ") → " + imageManager.FolderResumeMode
             : imageManager.CurrentMode;
         sb.AppendFormat(ci, "\n\nStatus: {0}  |  Mode: {1}",
             status, mode);

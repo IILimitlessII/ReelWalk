@@ -14,7 +14,7 @@ namespace ReelWalk.Services;
 internal sealed partial class ImageLibrary : IDisposable
 {
     // Plays folderPath, including subfolders unless that choice is off.
-    // mode is Random or Sequential. ready runs on the UI thread with false when nothing can play.
+    // mode is a folder order. ready runs on the UI thread with false when nothing can play.
     // Returns false when the folder does not exist.
     internal bool EnterFolderPlay(string folderPath, string mode, IList<string> ignorePaths, Action<bool> ready)
     {
@@ -34,7 +34,7 @@ internal sealed partial class ImageLibrary : IDisposable
 
         folderPlayGeneration++;
         int gen = folderPlayGeneration;
-        mode = NormalizeFolderMode(mode);
+        mode = FolderOrder.Normalize(mode);
         folderPlayMode = mode;
         folderPlayPath = folder;
         bool includeSub = folderIncludeSubfolders;
@@ -109,13 +109,13 @@ internal sealed partial class ImageLibrary : IDisposable
     }
 
     // Reorders the folder that is already playing.
-    // mode is Random or Sequential. Returns nothing when folder play is off.
+    // mode is a folder order. Returns nothing when folder play is off.
     internal void ApplyFolderPlayMode(string mode)
     {
         if (!folderPlayActive || playbackOrder == null || playbackOrder.Count == 0)
             return;
 
-        mode = NormalizeFolderMode(mode);
+        mode = FolderOrder.Normalize(mode);
         folderPlayMode = mode;
         var current = GetCurrentImagePath();
         OrderFolderFiles(playbackOrder, mode);
@@ -135,17 +135,6 @@ internal sealed partial class ImageLibrary : IDisposable
     {
         if (!folderPlayActive) return;
         RestoreSavedPlaylist(GetCurrentImagePath());
-    }
-
-    // Maps mode to Random or Sequential.
-    // Returns Random for anything that is not sequential.
-    private static string NormalizeFolderMode(string mode)
-    {
-        if (!string.IsNullOrEmpty(mode) &&
-            (mode.Equals("Random", StringComparison.OrdinalIgnoreCase) ||
-             mode.Equals("Shuffle", StringComparison.OrdinalIgnoreCase)))
-            return "Random";
-        return "Sequential";
     }
 
     // Replaces the indexed paths and their normalized copies.
@@ -298,10 +287,7 @@ internal sealed partial class ImageLibrary : IDisposable
 
         var keep = GetCurrentImagePath();
         bool stillOpener = string.Equals(keep, starter, StringComparison.OrdinalIgnoreCase);
-        if (IsRandom(folderPlayMode))
-            ShuffleInPlace(playbackOrder);
-        else
-            playbackOrder.Sort(StringComparer.OrdinalIgnoreCase);
+        OrderFolderFiles(playbackOrder, folderPlayMode);
         RebuildPlaybackIndex();
 
         int idx = FindPath(playbackOrder, keep);

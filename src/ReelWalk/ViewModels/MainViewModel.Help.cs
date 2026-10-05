@@ -34,6 +34,7 @@ internal sealed partial class MainViewModel
             "It opens on the folders around the current one.\n" +
             "Click a folder, or " + KeyName("explorer_play") + ", to play it. " + KeyName("explorer_open") + " opens it.\n" +
             "Subfolders includes folders inside it. This folder does not.\n" +
+            "Smallest and largest order by file size. Shortest and longest order videos by length.\n" +
             "Type to jump to a name. " + KeyName("explorer_back") + " goes back.\n" +
             "A photo that will not open is skipped.\n" +
             "New files are picked up on their own.\n" +

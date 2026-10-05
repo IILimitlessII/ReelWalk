@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ReelWalk.Services;
@@ -74,15 +75,80 @@ internal sealed partial class ImageLibrary
     }
 
     // Shuffles or sorts files for a folder mode.
-    // mode Random shuffles. Returns nothing.
+    // mode is Random, Sequential, SizeAsc, SizeDesc, LengthAsc, or LengthDesc. Returns nothing.
     private void OrderFolderFiles(List<string> files, string mode)
     {
         if (files == null)
             return;
-        if (IsRandom(mode))
+        mode = FolderOrder.Normalize(mode);
+        if (mode == FolderOrder.Random)
+        {
             ShuffleInPlace(files);
-        else
-            files.Sort(StringComparer.OrdinalIgnoreCase);
+            return;
+        }
+        if (mode == FolderOrder.SizeAsc || mode == FolderOrder.SizeDesc)
+        {
+            SortByMeasure(files, mode == FolderOrder.SizeDesc, false, FileBytes);
+            return;
+        }
+        if (mode == FolderOrder.LengthAsc || mode == FolderOrder.LengthDesc)
+        {
+            SortByMeasure(files, mode == FolderOrder.LengthDesc, true, VideoDuration.Milliseconds);
+            return;
+        }
+        files.Sort(StringComparer.OrdinalIgnoreCase);
+    }
+
+    // Sorts files by a measurement taken once per file.
+    // missingLast puts unknown lengths after every known length. Returns nothing.
+    private static void SortByMeasure(List<string> files, bool descending, bool missingLast, Func<string, long> measure)
+    {
+        var values = new long[files.Count];
+        for (int i = 0; i < files.Count; i++)
+            values[i] = measure(files[i]);
+
+        var order = new int[files.Count];
+        for (int i = 0; i < order.Length; i++)
+            order[i] = i;
+        Array.Sort(order, (a, b) => CompareMeasured(values[a], values[b], files[a], files[b], descending, missingLast));
+
+        var copy = new string[files.Count];
+        files.CopyTo(copy);
+        for (int i = 0; i < order.Length; i++)
+            files[i] = copy[order[i]];
+    }
+
+    // Compares two measurements, then the file name.
+    // missing lengths stay last in both directions. Returns the sort order.
+    private static int CompareMeasured(long aValue, long bValue, string aPath, string bPath, bool descending, bool missingLast)
+    {
+        bool aMissing = missingLast && aValue < 0;
+        bool bMissing = missingLast && bValue < 0;
+        if (aMissing || bMissing)
+        {
+            if (aMissing && bMissing)
+                return StringComparer.OrdinalIgnoreCase.Compare(aPath, bPath);
+            return aMissing ? 1 : -1;
+        }
+
+        int cmp = aValue.CompareTo(bValue);
+        if (cmp == 0)
+            return StringComparer.OrdinalIgnoreCase.Compare(aPath, bPath);
+        return descending ? -cmp : cmp;
+    }
+
+    // Byte length of a file.
+    // path is a file. Returns 0 when it cannot be read.
+    private static long FileBytes(string path)
+    {
+        try
+        {
+            return new FileInfo(path).Length;
+        }
+        catch
+        {
+            return 0;
+        }
     }
 
     // True for random library playback.

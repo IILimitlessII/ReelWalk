@@ -397,7 +397,7 @@ internal sealed partial class MainViewModel
         if (_playback == null)
             return;
 
-        string how = FolderPlayIsRandom ? "random" : "ordered";
+        string how = FolderOrder.Label(_playback.FolderPlayMode);
         _playback.PlayFolder(choice.FullPath, ok =>
         {
             if (ok)
@@ -417,7 +417,7 @@ internal sealed partial class MainViewModel
     [RelayCommand]
     private void SetFolderPlayOrdered()
     {
-        SetFolderPlayMode(false);
+        ApplyFolderOrder(FolderOrder.Sequential);
     }
 
     // Plays the open folder in random order.
@@ -425,7 +425,39 @@ internal sealed partial class MainViewModel
     [RelayCommand]
     private void SetFolderPlayRandom()
     {
-        SetFolderPlayMode(true);
+        ApplyFolderOrder(FolderOrder.Random);
+    }
+
+    // Plays the open folder from the smallest file.
+    // Returns nothing.
+    [RelayCommand]
+    private void SetFolderPlaySizeAsc()
+    {
+        ApplyFolderOrder(FolderOrder.SizeAsc);
+    }
+
+    // Plays the open folder from the largest file.
+    // Returns nothing.
+    [RelayCommand]
+    private void SetFolderPlaySizeDesc()
+    {
+        ApplyFolderOrder(FolderOrder.SizeDesc);
+    }
+
+    // Plays videos in the open folder from the shortest.
+    // Photos stay after the videos. Returns nothing.
+    [RelayCommand]
+    private void SetFolderPlayLengthAsc()
+    {
+        ApplyFolderOrder(FolderOrder.LengthAsc);
+    }
+
+    // Plays videos in the open folder from the longest.
+    // Photos stay after the videos. Returns nothing.
+    [RelayCommand]
+    private void SetFolderPlayLengthDesc()
+    {
+        ApplyFolderOrder(FolderOrder.LengthDesc);
     }
 
     // Limits folder play to the selected folder.
@@ -444,17 +476,32 @@ internal sealed partial class MainViewModel
         SetFolderDepth(true);
     }
 
-    // Sets random or ordered folder play.
-    // random false is path order. Returns nothing.
-    private void SetFolderPlayMode(bool random)
+    // Sets the folder order and highlights that button.
+    // mode is a FolderOrder name. Returns nothing.
+    private void ApplyFolderOrder(string mode)
     {
         if (_playback == null)
             return;
-        _playback.SetFolderPlayMode(random ? "Random" : "Sequential");
-        FolderPlayIsRandom = random;
+        _playback.SetFolderPlayMode(mode);
+        SyncFolderOrderFlags();
         if (_playback.IsFolderPlay)
-            ShowToast((random ? "Random" : "Ordered") + " folder play", false);
+            ShowToast(FolderOrder.Label(mode) + " folder play", false);
         RefreshInfo();
+    }
+
+    // Highlights the folder order that is saved.
+    // Returns nothing.
+    private void SyncFolderOrderFlags()
+    {
+        string mode = _playback == null
+            ? FolderOrder.Random
+            : FolderOrder.Normalize(_playback.FolderPlayMode);
+        FolderPlayIsRandom = mode == FolderOrder.Random;
+        FolderPlayIsOrdered = mode == FolderOrder.Sequential;
+        FolderPlayIsSizeAsc = mode == FolderOrder.SizeAsc;
+        FolderPlayIsSizeDesc = mode == FolderOrder.SizeDesc;
+        FolderPlayIsLengthAsc = mode == FolderOrder.LengthAsc;
+        FolderPlayIsLengthDesc = mode == FolderOrder.LengthDesc;
     }
 
     // Plays nested folders or only the chosen folder.

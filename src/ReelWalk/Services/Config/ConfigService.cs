@@ -162,8 +162,8 @@ internal static partial class ConfigService
         lines.Add("mode = " + Quote(string.IsNullOrEmpty(config.PlaybackMode) ? "Random" : config.PlaybackMode));
         lines.Add("# Both | Images | Videos");
         lines.Add("show = " + Quote(MediaTypes.NormalizeShow(config.MediaShow)));
-        lines.Add("# Random | Sequential — starting choice in the folder menu");
-        lines.Add("folder_mode = " + Quote(NormalizeFolderPlayMode(
+        lines.Add("# Random | Sequential | SizeAsc | SizeDesc | LengthAsc | LengthDesc");
+        lines.Add("folder_mode = " + Quote(FolderOrder.Normalize(
             string.IsNullOrEmpty(config.FolderPlayMode) ? "Random" : config.FolderPlayMode)));
         lines.Add("# true plays folders inside the chosen folder as well.");
         lines.Add("folder_subfolders = " + (config.FolderIncludeSubfolders ? "true" : "false"));
@@ -243,7 +243,7 @@ internal static partial class ConfigService
 
         config.PlaybackMode = doc.Text("playback.mode", config.PlaybackMode);
         config.MediaShow = MediaTypes.NormalizeShow(doc.Text("playback.show", config.MediaShow));
-        config.FolderPlayMode = NormalizeFolderPlayMode(doc.Text("playback.folder_mode", "Random"));
+        config.FolderPlayMode = FolderOrder.Normalize(doc.Text("playback.folder_mode", "Random"));
         config.FolderIncludeSubfolders = doc.Bool("playback.folder_subfolders", true);
         config.BackHistory = ClampInt(doc.Number("playback.history", 10), 10, 1, 500);
         config.LastImageIndex = (int)doc.Number("playback.last_index", config.LastImageIndex);
@@ -345,17 +345,6 @@ internal static partial class ConfigService
         }
         sb.Append('"');
         return sb.ToString();
-    }
-
-    // Maps the folder order to Random or Sequential.
-    // val is the raw setting. Returns Random for anything that is not sequential.
-    private static string NormalizeFolderPlayMode(string val)
-    {
-        if (!string.IsNullOrEmpty(val) &&
-            (val.Equals("Sequential", StringComparison.OrdinalIgnoreCase) ||
-             val.Equals("Ordered", StringComparison.OrdinalIgnoreCase)))
-            return "Sequential";
-        return "Random";
     }
 
     // Clamps a volume into 0 to 1.

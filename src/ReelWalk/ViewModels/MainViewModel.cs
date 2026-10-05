@@ -41,6 +41,11 @@ internal sealed partial class MainViewModel : ObservableObject
     [ObservableProperty] private bool _canPlayBrowse;
     [ObservableProperty] private string _explorerEmptyText = "";
     [ObservableProperty] private bool _folderPlayIsRandom;
+    [ObservableProperty] private bool _folderPlayIsOrdered;
+    [ObservableProperty] private bool _folderPlayIsSizeAsc;
+    [ObservableProperty] private bool _folderPlayIsSizeDesc;
+    [ObservableProperty] private bool _folderPlayIsLengthAsc;
+    [ObservableProperty] private bool _folderPlayIsLengthDesc;
     [ObservableProperty] private bool _folderIncludesSubfolders = true;
     [ObservableProperty] private bool _isFolderPlaying;
     [ObservableProperty] private string _pathText = "";

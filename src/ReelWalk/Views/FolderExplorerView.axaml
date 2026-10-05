@@ -43,8 +43,22 @@
                             Classes.hot="{Binding FolderPlayIsRandom}"
                             Command="{Binding SetFolderPlayRandomCommand}"/>
                     <Button Content="Ordered" Classes="mode"
-                            Classes.hot="{Binding !FolderPlayIsRandom}"
+                            Classes.hot="{Binding FolderPlayIsOrdered}"
                             Command="{Binding SetFolderPlayOrderedCommand}"/>
+                    <Button Content="Smallest" Classes="mode"
+                            Classes.hot="{Binding FolderPlayIsSizeAsc}"
+                            Command="{Binding SetFolderPlaySizeAscCommand}"/>
+                    <Button Content="Largest" Classes="mode"
+                            Classes.hot="{Binding FolderPlayIsSizeDesc}"
+                            Command="{Binding SetFolderPlaySizeDescCommand}"/>
+                    <Button Content="Shortest" Classes="mode"
+                            Classes.hot="{Binding FolderPlayIsLengthAsc}"
+                            Command="{Binding SetFolderPlayLengthAscCommand}"/>
+                    <Button Content="Longest" Classes="mode"
+                            Classes.hot="{Binding FolderPlayIsLengthDesc}"
+                            Command="{Binding SetFolderPlayLengthDescCommand}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                     <Button Content="Subfolders" Classes="mode"
                             Classes.hot="{Binding FolderIncludesSubfolders}"
                             Command="{Binding SetFolderSubfoldersCommand}"/>

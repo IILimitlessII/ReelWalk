@@ -63,8 +63,7 @@ internal sealed partial class MainViewModel
         _query = "";
         _queryAt = DateTime.MinValue;
         RefreshExplorer();
-        FolderPlayIsRandom = string.Equals(
-            _playback.FolderPlayMode, "Random", StringComparison.OrdinalIgnoreCase);
+        SyncFolderOrderFlags();
         FolderIncludesSubfolders = _playback.FolderIncludeSubfolders;
         IsFolderPlaying = _playback.IsFolderPlay;
         RefreshExplorerLibraryLists();
