@@ -114,12 +114,32 @@ internal sealed partial class MainViewModel
 
     internal bool SettingsFolderIsRandom
     {
-        get { return string.Equals(SettingsFolderMode, "Random", StringComparison.OrdinalIgnoreCase); }
+        get { return string.Equals(SettingsFolderMode, FolderOrder.Random, StringComparison.OrdinalIgnoreCase); }
     }
 
     internal bool SettingsFolderIsOrdered
     {
-        get { return !SettingsFolderIsRandom; }
+        get { return string.Equals(SettingsFolderMode, FolderOrder.Sequential, StringComparison.OrdinalIgnoreCase); }
+    }
+
+    internal bool SettingsFolderIsSizeAsc
+    {
+        get { return string.Equals(SettingsFolderMode, FolderOrder.SizeAsc, StringComparison.OrdinalIgnoreCase); }
+    }
+
+    internal bool SettingsFolderIsSizeDesc
+    {
+        get { return string.Equals(SettingsFolderMode, FolderOrder.SizeDesc, StringComparison.OrdinalIgnoreCase); }
+    }
+
+    internal bool SettingsFolderIsLengthAsc
+    {
+        get { return string.Equals(SettingsFolderMode, FolderOrder.LengthAsc, StringComparison.OrdinalIgnoreCase); }
+    }
+
+    internal bool SettingsFolderIsLengthDesc
+    {
+        get { return string.Equals(SettingsFolderMode, FolderOrder.LengthDesc, StringComparison.OrdinalIgnoreCase); }
     }
 
     // Opens or closes the settings panel.
@@ -342,7 +362,7 @@ internal sealed partial class MainViewModel
     {
         if (!_settingsReady || _playback == null) return;
         _playback.SetFolderPlayMode(value);
-        FolderPlayIsRandom = string.Equals(value, "Random", StringComparison.OrdinalIgnoreCase);
+        SyncFolderOrderFlags();
         NotifySettingsModeFlags();
     }
 
@@ -554,5 +574,9 @@ internal sealed partial class MainViewModel
         OnPropertyChanged(nameof(SettingsShowIsVideos));
         OnPropertyChanged(nameof(SettingsFolderIsRandom));
         OnPropertyChanged(nameof(SettingsFolderIsOrdered));
+        OnPropertyChanged(nameof(SettingsFolderIsSizeAsc));
+        OnPropertyChanged(nameof(SettingsFolderIsSizeDesc));
+        OnPropertyChanged(nameof(SettingsFolderIsLengthAsc));
+        OnPropertyChanged(nameof(SettingsFolderIsLengthDesc));
     }
 }

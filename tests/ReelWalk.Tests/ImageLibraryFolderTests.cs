@@ -49,6 +49,46 @@ public class ImageLibraryFolderTests
     }
 
     [AvaloniaFact]
+    public async Task SizeDesc_StartsOnTheLargestFile()
+    {
+        using (var dir = new FolderDir())
+        using (var lib = new ImageLibrary("Sequential", 0, 1))
+        {
+            var folder = dir.Folder("album");
+            var small = dir.Bytes(folder, "small.png", 20);
+            var large = dir.Bytes(folder, "large.png", 400);
+            var mid = dir.Bytes(folder, "mid.png", 80);
+            lib.ApplyLibrary(new List<string> { small, large, mid }, true, ImageLibrary.LibraryStageScan);
+
+            bool? ready = null;
+            Assert.True(lib.EnterFolderPlay(folder, "Largest", null, ok => ready = ok));
+            Assert.True(await Wait(() => ready == true));
+            var order = Playlist(lib).Select(Path.GetFileName).ToArray();
+            Assert.Equal(new[] { "large.png", "mid.png", "small.png" }, order);
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task LengthAsc_PutsTheShortestVideoFirst()
+    {
+        using (var dir = new FolderDir())
+        using (var lib = new ImageLibrary("Sequential", 0, 1))
+        {
+            var folder = dir.Folder("album");
+            var photo = dir.Png(folder, "photo.png");
+            var shortClip = dir.Mp4(folder, "short.mp4", 1500);
+            var longClip = dir.Mp4(folder, "long.mp4", 8000);
+            lib.ApplyLibrary(new List<string> { photo, longClip, shortClip }, true, ImageLibrary.LibraryStageScan);
+
+            bool? ready = null;
+            Assert.True(lib.EnterFolderPlay(folder, "Shortest", null, ok => ready = ok));
+            Assert.True(await Wait(() => ready == true));
+            var order = Playlist(lib).Select(Path.GetFileName).ToArray();
+            Assert.Equal(new[] { "short.mp4", "long.mp4", "photo.png" }, order);
+        }
+    }
+
+    [AvaloniaFact]
     public async Task DiskWalk_LeavesOutIgnoredChildren()
     {
         using (var dir = new FolderDir())
@@ -234,6 +274,49 @@ public class ImageLibraryFolderTests
             var path = Path.Combine(folder, name);
             SampleFiles.WritePng(path);
             return path;
+        }
+
+        internal string Bytes(string folder, string name, int length)
+        {
+            var path = Path.Combine(folder, name);
+            File.WriteAllBytes(path, new byte[length]);
+            return path;
+        }
+
+        internal string Mp4(string folder, string name, int durationMs)
+        {
+            var path = Path.Combine(folder, name);
+            File.WriteAllBytes(path, SampleMp4(durationMs));
+            return path;
+        }
+
+        private static byte[] SampleMp4(int durationMs)
+        {
+            var mvhd = new byte[32];
+            WriteBe(mvhd, 0, (uint)mvhd.Length);
+            mvhd[4] = (byte)'m';
+            mvhd[5] = (byte)'v';
+            mvhd[6] = (byte)'h';
+            mvhd[7] = (byte)'d';
+            WriteBe(mvhd, 20, 1000);
+            WriteBe(mvhd, 24, (uint)durationMs);
+
+            var moov = new byte[8 + mvhd.Length];
+            WriteBe(moov, 0, (uint)moov.Length);
+            moov[4] = (byte)'m';
+            moov[5] = (byte)'o';
+            moov[6] = (byte)'o';
+            moov[7] = (byte)'v';
+            Buffer.BlockCopy(mvhd, 0, moov, 8, mvhd.Length);
+            return moov;
+        }
+
+        private static void WriteBe(byte[] buf, int offset, uint value)
+        {
+            buf[offset] = (byte)(value >> 24);
+            buf[offset + 1] = (byte)(value >> 16);
+            buf[offset + 2] = (byte)(value >> 8);
+            buf[offset + 3] = (byte)value;
         }
 
         public void Dispose()

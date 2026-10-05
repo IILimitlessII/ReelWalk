@@ -164,6 +164,24 @@
                                     Command="{Binding SetSettingsFolderModeCommand}"
                                     CommandParameter="Sequential"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                            <Button Content="Smallest" Classes="mode"
+                                    Classes.hot="{Binding SettingsFolderIsSizeAsc}"
+                                    Command="{Binding SetSettingsFolderModeCommand}"
+                                    CommandParameter="SizeAsc"/>
+                            <Button Content="Largest" Classes="mode"
+                                    Classes.hot="{Binding SettingsFolderIsSizeDesc}"
+                                    Command="{Binding SetSettingsFolderModeCommand}"
+                                    CommandParameter="SizeDesc"/>
+                            <Button Content="Shortest" Classes="mode"
+                                    Classes.hot="{Binding SettingsFolderIsLengthAsc}"
+                                    Command="{Binding SetSettingsFolderModeCommand}"
+                                    CommandParameter="LengthAsc"/>
+                            <Button Content="Longest" Classes="mode"
+                                    Classes.hot="{Binding SettingsFolderIsLengthDesc}"
+                                    Command="{Binding SetSettingsFolderModeCommand}"
+                                    CommandParameter="LengthDesc"/>
+                        </StackPanel>
                         <Button Content="Include subfolders"
                                 Classes="mode"
                                 Classes.hot="{Binding SettingsFolderSubfolders}"

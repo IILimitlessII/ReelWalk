@@ -63,6 +63,9 @@ public class ConfigServiceTests
             Assert.Equal("NewestFirst", loaded.PlaybackMode);
             Assert.Equal("Images", loaded.MediaShow);
             Assert.Equal("Sequential", loaded.FolderPlayMode);
+            config.FolderPlayMode = "Largest";
+            ConfigService.SaveConfig(path, config);
+            Assert.Equal("SizeDesc", ConfigService.LoadConfig(path).FolderPlayMode);
             Assert.False(loaded.FolderIncludeSubfolders);
             Assert.Equal(25, loaded.BackHistory);
             Assert.Equal(4, loaded.LastImageIndex);

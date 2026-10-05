@@ -189,7 +189,7 @@ video_volume = 1.00      # 0.00 mute, 1.00 full
 [playback]
 mode = "Random"          # Random | NewestFirst | OldestFirst | Sequential
 show = "Both"            # Both | Images | Videos
-folder_mode = "Random"   # Random | Sequential
+folder_mode = "Random"   # Random | Sequential | SizeAsc | SizeDesc | LengthAsc | LengthDesc
 folder_subfolders = true
 history = 10
 last_index = 0
